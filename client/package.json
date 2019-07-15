@@ -64,12 +64,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/naver-d2-the-view/The-View.git"
+    "url": "git+https://github.com/naver-d2-one-page/One-Page.git"
   },
   "author": "taeuk.kang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/naver-d2-the-view/The-View.git/issues"
+    "url": "https://github.com/naver-d2-one-page/One-Page.git/issues"
   },
-  "homepage": "https://github.com/naver-d2-the-view/The-View.git#readme"
+  "homepage": "https://github.com/naver-d2-one-page/One-Page.git#readme"
 }

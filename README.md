@@ -1,4 +1,4 @@
-# The-View Client
+# One-Page
 ## 네이버 D2 출품작
 
 - 설명: 초대형 모니터에 적합한 기사 배열 만들기 
@@ -6,7 +6,7 @@
 ## 저장소 클론하기
 * 깃 저장소를 로컬에 복사합니다.
 ```bash
-git clone https://github.com/naver-d2-the-view/The-View.git 프로젝트명
+git clone https://github.com/naver-d2-one-page/One-Page.git 프로젝트명
 cd 프로젝트명
 ```
 ## 빌드하기
@@ -90,4 +90,4 @@ npm run production
 
 ## 기타
 
-다른 세부사항은 `WIKI` 및 `Projects` 패널 참조 
+다른 세부사항은 `WIKI` 및 `Projects` 패널 참조

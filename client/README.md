@@ -1,28 +1,22 @@
-# The-View Client
-
+# One-Page
 ## 네이버 D2 출품작
 
 - 설명: 초대형 모니터에 적합한 기사 배열 만들기 
 
 ## 저장소 클론하기
-
-- 깃 저장소를 로컬에 복사합니다.
-
+* 깃 저장소를 로컬에 복사합니다.
 ```bash
-git clone https://github.com/naver-d2-the-view/The-View.git 프로젝트명
+git clone https://github.com/naver-d2-one-page/One-Page.git 프로젝트명
 cd 프로젝트명
 ```
-
 ## 빌드하기
 
-- npm 패키지를 설치하고, 빌드 스크립트를 실행합니다.
-
+* npm 패키지를 설치하고, 빌드 스크립트를 실행합니다.
 ```bash
 npm install
 ```
 
-- 아래와 같은 폴더가 생성됩니다.
-
+* 아래와 같은 폴더가 생성됩니다.
 ```
 📦client
  ┣ 📂.storybook
@@ -61,8 +55,7 @@ npm install
 
 ## 테스트하기
 
-- 개발과정 테스트
-
+* 개발과정 테스트
 ```bash
 # client 폴더로 이동
 cd client
@@ -76,8 +69,7 @@ npm run storybook
 # 이후, localhost:9001 에서 페이지/컴포넌트별 테스팅
 ```
 
-- 배포 전 테스트
-
+* 배포 전 테스트
 ```bash
 # Travis CI 자동 Build 검사
 # 단위 테스트
@@ -85,7 +77,6 @@ npm test
 ```
 
 ## 배포하기
-
 ```bash
 # Develop 버전 배포
 npm run bundle
@@ -100,3 +91,4 @@ npm run production
 ## 기타
 
 다른 세부사항은 `WIKI` 및 `Projects` 패널 참조
+
