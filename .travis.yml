@@ -12,6 +12,7 @@ cache:
 install:
   - npm install
 before_script:
+  - cd client
   - npm run lint
 script:
   - xvfb-run npm run test
