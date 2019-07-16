@@ -14,7 +14,7 @@ export class PageMain extends LitRender(HTMLElement) {
 	render() {
 		return html` 
 		${style}
-		<div id="pageMain">
+		<div id="pageMain">			
 			<img class="logo" src="/src/img/logo.png" width="270"/>
 			<h1 class="site-description">사이트 설명</h1>
 			<input type="search" name="search" placeholder="보고싶은 기사의 URL을 입력해주세요." class="animated-search-form">
@@ -27,16 +27,18 @@ const style = html`
 <style>
 #pageMain {
 	display: grid;
-	-webkit-box-pack: center;
-	-ms-flex-pack: center;
-	justify-content: center;
-	-webkit-box-align: center;
-	-ms-flex-align: center;
-	align-items: center;
 	width: 95vw;
 	margin: auto;
-	justify-items: center;
 	margin-bottom: 100px;
+}
+
+#pageMain > * {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.logo {
+	box-shadow: 0 0 3.125rem rgba(0, 0, 0, 0.18);
 }
 
 .site-description {
@@ -58,10 +60,6 @@ const style = html`
   background-repeat: no-repeat;
   padding: 0.75rem 1.25rem 0.75rem 2rem;
   transition: width 0.4s ease-in-out;
-}
-
-.animated-search-form[type=search]:focus {
-  width: 100%;
 }
 
 </style>

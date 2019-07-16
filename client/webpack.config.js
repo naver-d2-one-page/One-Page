@@ -5,7 +5,7 @@ module.exports = {
 		"main-bundle": [`./src/main.js`],
 	},
 	output: {
-		path: path.resolve(__dirname, `./`),
+		path: path.resolve(__dirname, `./public`),
 		filename: `[name].js`,
 	},
 	module: {
@@ -50,7 +50,7 @@ module.exports = {
 	},	
 	devServer: {
 		hot : true,
-		contentBase: path.join(__dirname, `/`),
+		contentBase: path.join(__dirname, `/public`),
 		watchContentBase: true,
 		historyApiFallback: true,
 		compress: true,
