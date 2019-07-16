@@ -10,9 +10,9 @@ cache:
   directories:
     - node_modules
 install:
+  - cd client
   - npm install
 before_script:
-  - cd client
   - npm run lint
 script:
   - xvfb-run npm run test
