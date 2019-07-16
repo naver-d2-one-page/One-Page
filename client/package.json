@@ -56,20 +56,21 @@
     "bundle": "./node_modules/.bin/webpack --hide-modules --colors --mode=none",
     "deploy": "npm run production && rm -rf ./server/* && cp -rf ./index.html ./server && cp -rf ./main-bundle.js ./server/ && cp -rf ./index.css ./server && cd server && mkdir src && cd src && cd ../../ && cp -rf ./src/css ./server/src/",
     "watch": "./node_modules/.bin/webpack --hide-modules --colors --mode=none --watch",
-    "storybook": "./node_modules/.bin/start-storybook -p 9001 -s ./",
+    "storybook": "./node_modules/.bin/start-storybook -p 9001 -s ./public",
     "build-storybook": "./node_modules/.bin/build-storybook",
     "lint": "eslint ./src/",
     "test-detail": "npm run bundle && npm run lint && wct -p --npm",
-    "test": "wct -l chrome --npm"
+    "test": "wct -l chrome --npm",
+    "test-pause": "wct -l chrome --npm -p"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/naver-d2-the-view/The-View.git"
+    "url": "git+https://github.com/naver-d2-one-page/One-Page.git"
   },
   "author": "taeuk.kang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/naver-d2-the-view/The-View.git/issues"
+    "url": "https://github.com/naver-d2-one-page/One-Page.git/issues"
   },
-  "homepage": "https://github.com/naver-d2-the-view/The-View.git#readme"
+  "homepage": "https://github.com/naver-d2-one-page/One-Page.git#readme"
 }

@@ -1,4 +1,7 @@
-# The-View Client
+# One-Page
+
+[![Build Status](https://travis-ci.org/naver-d2-one-page/One-Page.svg?branch=master)](https://travis-ci.org/naver-d2-one-page/One-Page) [![codebeat badge](https://codebeat.co/badges/77d06d94-412c-462f-96bd-66ce9f6e24c1)](https://codebeat.co/projects/github-com-naver-d2-one-page-one-page-master) ![GitHub](https://img.shields.io/github/license/naver-d2-one-page/One-Page.svg) ![Website](https://img.shields.io/website/https/op-news.web.app/main.svg) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/naver-d2-one-page/One-Page.svg)
+
 ## 네이버 D2 출품작
 
 - 설명: 초대형 모니터에 적합한 기사 배열 만들기 
@@ -6,7 +9,7 @@
 ## 저장소 클론하기
 * 깃 저장소를 로컬에 복사합니다.
 ```bash
-git clone https://github.com/naver-d2-the-view/The-View.git 프로젝트명
+git clone https://github.com/naver-d2-one-page/One-Page.git 프로젝트명
 cd 프로젝트명
 ```
 ## 빌드하기
@@ -20,35 +23,51 @@ npm install
 ```
 📦client
  ┣ 📂.storybook
- ┃ ┗ 📜config.js (storybook.js UI 테스트 config)
+ ┃ ┗ 📜config.js 					# storybook.js UI 테스트 config
+ ┣ 📂functions						# firebase 서버리스 함수 모음
+ ┃ ┣ 📜.eslintrc.js
+ ┃ ┣ 📜.gitignore
+ ┃ ┣ 📜index.js
+ ┃ ┗ 📜package.json
+ ┣ 📂public							# 호스팅 Public 폴더
+ ┃ ┣ 📂src
+ ┃ ┃ ┣ 📂css
+ ┃ ┃ ┃ ┗ 📜foundation.min.css		# foundation 프레임워크 css
+ ┃ ┃ ┗ 📂img
+ ┃ ┃ ┃ ┗ 📜logo.png
+ ┃ ┣ 📜index.css					# Init CSS
+ ┃ ┗ 📜index.html					# Init HTML
  ┣ 📂src
- ┃ ┣ 📂components (View - 재사용 컴포넌트 모음)
+ ┃ ┣ 📂components					# View - 재사용 컴포넌트 모음
  ┃ ┃ ┗ 📜page-main.js
- ┃ ┣ 📂css
- ┃ ┃ ┗ 📜foundation.min.css (foundation 프레임워크 css)
  ┃ ┣ 📂libs
- ┃ ┃ ┣ 📜actions.js (Controller)
- ┃ ┃ ┣ 📜litRender.js (lit-html sub module)
- ┃ ┃ ┣ 📜redux-zero.js (redux-zero module)
- ┃ ┃ ┗ 📜store.js (Store)
- ┃ ┣ 📂stories
- ┃ ┃ ┗ 📜index.stories.js (UI 테스트 코드)
- ┃ ┗ 📜main.js (Init 코드)
+ ┃ ┃ ┣ 📜actions.js					# Controller - 전체 Action 모음
+ ┃ ┃ ┣ 📜litRender.js				# lit-html sub module
+ ┃ ┃ ┣ 📜redux-zero.js				# redux-zero module
+ ┃ ┃ ┗ 📜store.js					# Model - Store
+ ┃ ┣ 📂stories						
+ ┃ ┃ ┗ 📜index.stories.js			# UI 테스트 코드 모음
+ ┃ ┗ 📜main.js						# Init JS
  ┣ 📂test
- ┃ ┗ 📜index.html (단위 테스트 코드)
- ┣ 📜.babelrc (바벨 설정)
+ ┃ ┗ 📜index.html					# 단위 테스트 코드
+ ┣ 📜.babelrc						# Babel 설정
  ┣ 📜.codebeatignore
  ┣ 📜.eslintignore
- ┣ 📜.eslintrc.js (EsLint 설정)
+ ┣ 📜.eslintrc.js					# EsLint 설정
+ ┣ 📜.firebaserc
  ┣ 📜.gitignore
- ┣ 📜.travis.yml (Travis CI 설정)
- ┣ 📜index.css (전체 CSS)
- ┣ 📜index.html (전체 HTML)
+ ┣ 📜.travis.yml					# Travis CI 설정
+ ┣ 📜database.rules.json
+ ┣ 📜firebase.json					# Firebase 설정
+ ┣ 📜firestore.indexes.json
+ ┣ 📜firestore.rules
  ┣ 📜package-lock.json
- ┣ 📜package.json (패키징 관리)
+ ┣ 📜package.json					# Package.json 설정
  ┣ 📜postcss.config.js
+ ┣ 📜README.md						# README
+ ┣ 📜storage.rules
  ┣ 📜wct.conf.json
- ┗ 📜webpack.config.js (Webpack 설정)
+ ┗ 📜webpack.config.js				# Webpack 설정
 📦server
  ┗ 생성 중
 ```
