@@ -24,7 +24,7 @@ export class PageMain extends LitRender(HTMLElement) {
 }
 
 const style = html`
-<style>
+<style>	
 #pageMain {
 	display: grid;
 	width: 95vw;
@@ -33,8 +33,13 @@ const style = html`
 }
 
 #pageMain > * {
+	display: block;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+#pageMain * {
+	font-family: 'Noto Sans KR', sans-serif;
 }
 
 .logo {
@@ -45,7 +50,8 @@ const style = html`
 	color: #3498DB;
     text-align: center;
     margin: 1vh 0;
-    font-size: 2em;
+	font-size: 2em;
+	font-weight: bold;
 }
 
 .animated-search-form[type=search] {
@@ -55,11 +61,9 @@ const style = html`
   border: 0.125rem solid #e6e6e6;
   box-shadow: 0 0 3.125rem rgba(0, 0, 0, 0.18);
   border-radius: 0;
-  background-image: url("//image.ibb.co/i7NbrQ/search_icon_15.png");
-  background-position: 0.625rem 0.625rem;
-  background-repeat: no-repeat;
   padding: 0.75rem 1.25rem 0.75rem 2rem;
   transition: width 0.4s ease-in-out;
+  line-height: 0;
 }
 
 </style>
