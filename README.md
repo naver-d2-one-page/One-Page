@@ -1,4 +1,7 @@
 # One-Page
+
+[![Build Status](https://travis-ci.org/naver-d2-one-page/One-Page.svg?branch=master)](https://travis-ci.org/naver-d2-one-page/One-Page) [![codebeat badge](https://codebeat.co/badges/77d06d94-412c-462f-96bd-66ce9f6e24c1)](https://codebeat.co/projects/github-com-naver-d2-one-page-one-page-master) ![GitHub](https://img.shields.io/github/license/naver-d2-one-page/One-Page.svg) ![Website](https://img.shields.io/website/https/op-news.web.app/main.svg) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/naver-d2-one-page/One-Page.svg)
+
 ## 네이버 D2 출품작
 
 - 설명: 초대형 모니터에 적합한 기사 배열 만들기 
