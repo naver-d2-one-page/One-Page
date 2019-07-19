@@ -1,0 +1,27 @@
+{
+  "name": "crawler",
+  "version": "1.0.0",
+  "description": "\"news crawler\"",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naver-d2-one-page/One-Page.git"
+  },
+  "author": "moon",
+  "license": "apache 2.0",
+  "bugs": {
+    "url": "https://github.com/naver-d2-one-page/One-Page/issues"
+  },
+  "homepage": "https://github.com/naver-d2-one-page/One-Page#readme",
+  "dependencies": {
+    "jssoup": "0.0.10",
+    "nodemon": "^1.19.1",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.0.1"
+  }
+}
