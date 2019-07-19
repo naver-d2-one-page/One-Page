@@ -104,8 +104,11 @@ npm run bundle
 # Production 버전 배포
 npm run production
 
-## main-bundle.js 생성 후, server에서 구동
-## (이후, 파이어베이스에서 사용할 예정)
+## 전체 Deploy
+firebase deploy
+
+## 호스팅만 Deploy
+firebase deploy --only hosting:op-news
 ```
 
 ## 기타

@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/naver-d2-one-page/One-Page#readme",
   "dependencies": {
+    "cors-anywhere": "^0.4.1",
+    "forever": "^1.0.0",
     "jssoup": "0.0.10",
     "nodemon": "^1.19.1",
     "request": "^2.88.0"
