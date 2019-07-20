@@ -2,13 +2,83 @@ import { html } from 'lit-html'
 
 import LitRender from '../libs/litRender'
 
+import './modal-news.js'
+
 export class PageMain extends LitRender(HTMLElement) {
 	constructor() {
 		super()
 
+		this._handlers = {}
+
 		this.attachShadow({ mode: `open` })
 
 		this.invalidate()
+	}
+
+	connectedCallback() {
+		const root = this.shadowRoot
+		const handlers = this._handlers
+
+		handlers.onEnter = this._onEnter.bind(this)				
+		
+		root.addEventListener(`keydown`, handlers.onEnter)		
+	}
+
+	disconnectedCallback() {
+		const root = this.shadowRoot
+
+		root.removeEventListener(`keydown`, this._handlers.onEnter)
+	}
+
+	_onEnter(event) {				
+		if (event.target.classList.contains(`type-url`) && event.key === `Enter`) {
+			const url = event.target.value					
+			this.loadXhr(url)
+		}
+	}
+
+	loadXhr(url) {
+		const xhr = new XMLHttpRequest()
+
+		if(!xhr) {
+			throw new Error(`XHR 호출 불가`)
+		}
+
+		xhr.open(`GET`, `https://106.10.53.225:8080/${url}`)
+		xhr.addEventListener(`readystatechange`, () => {
+			if (xhr.readyState === xhr.DONE) {
+				if (xhr.status === 200 || xhr.status === 201) {
+					const _html = xhr.responseText
+					const parser = new DOMParser()
+					const doc = parser.parseFromString(_html, `text/html`)
+					const modal = this.shadowRoot.querySelector(`modal-news`)					
+					
+					modal.empty()
+					modal.addContent(this.searchNewsContent(_html, doc))
+					modal.show()
+				}
+			}
+		})
+		xhr.send()
+	}
+
+	searchNewsContent(_html, doc) {
+		let div = document.createElement(`div`)
+		// Daum
+		// doc.querySelectorAll(`.news_view p, .news_view img`).forEach(element => {
+		// 	div.appendChild(element)					
+		// })
+
+		// Naver 인쇄모드		
+		div = doc.querySelector(`.content`)
+		console.info(`HTML: `, div)
+		this.getTitlte(div)
+		return div		
+	}
+
+	getTitlte(div) {
+		console.info(`TITLE: `, div.querySelector(`h3`))
+		return div.querySelector(`h3`)
 	}
 
 	render() {
@@ -17,8 +87,9 @@ export class PageMain extends LitRender(HTMLElement) {
 		<div id="pageMain">			
 			<img class="logo" src="/src/img/logo.png" width="270"/>
 			<h1 class="site-description">사이트 설명</h1>
-			<input type="search" name="search" placeholder="보고싶은 기사의 URL을 입력해주세요." class="animated-search-form">
+			<input type="search" name="search" placeholder="보고싶은 기사의 URL을 입력해주세요." class="animated-search-form type-url">
         </div>
+		<modal-news />
         `
 	}
 }
