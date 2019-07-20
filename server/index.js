@@ -6,76 +6,26 @@
 
 const request = require('request');
 let JSSoup = require('jssoup').default;
-let ArrNewsTitle = [];      //기사제목
-let ArrNewsComp = [];       //언론사
 let ArrNewsLink = [];       //기사 본문 링크
-let ArrNewsContent = [];    //기사 본문
-let ArrNewsTime = [];       //뉴스 등록시간
-let ArrReNewsTime = [];       //뉴스 수정시간
-let ArrReporterName = [];       //기자이름
-let ArrNewsImg = [];       //기자이름
-let TitleLen = 25;         //추출 제목 갯수
-let NewsLen = 24;          //본문 이동용 링크 갯수
-let url = "https://media.daum.net/";
+let url = "https://news.naver.com/";
 request.get(url, function(error,response,body){
-    const soup = new JSSoup(body);
-    let attrFinder = soup.findAll('a');
-    for (let i=0; i<attrFinder.length; i++){
-        if (attrFinder[i].attrs.class === "link_txt"){
-            // if (ArrNewsTitle.length < 1){
-                 console.info(attrFinder[i])
-            // }
-            ArrNewsTitle.push(attrFinder[i].text)
-            if (ArrNewsTitle.length >TitleLen){
-                break;
-            }
-            ArrNewsLink.push(attrFinder[i].attrs.href)
-            if (ArrNewsLink.length > NewsLen){
-                break;
-            }
-        }
-    }
-    let spanFinder = soup.findAll('span');
-    for (let i=0; i<spanFinder.length; i++){
-        if (spanFinder[i].attrs.class === "txt_view"){
-            ArrNewsComp.push(spanFinder[i].text)
-            if (ArrNewsComp.length > NewsLen){
-                break;
+    let soup = new JSSoup(body);
+    let ulFinder = soup.findAll('ul');
+    for (let i=0; i<ulFinder.length; i++){
+        if (ulFinder[i].attrs.class === "mlist2 no_bg"){
+            for (let j=0; j<ulFinder[i].contents.length; j++){
+                let temp = ulFinder[i].contents[j].nextElement.attrs.href;
+                temp = temp.replace('read.nhn?mode=LSD&mid=shm&sid1=100&','tool/print.nhn?');
+                temp = temp.replace('read.nhn?mode=LSD&mid=shm&sid1=101&','tool/print.nhn?');
+                temp = temp.replace('read.nhn?mode=LSD&mid=shm&sid1=102&','tool/print.nhn?');
+                temp = temp.replace('read.nhn?mode=LSD&mid=shm&sid1=103&','tool/print.nhn?');
+                temp = temp.replace('read.nhn?mode=LSD&mid=shm&sid1=104&','tool/print.nhn?');
+                temp = temp.replace('read.nhn?mode=LSD&mid=shm&sid1=105&','tool/print.nhn?');
+                ArrNewsLink.push(temp) //기사 본문 링크
             }
         }
     }
-    for (let i=0; i< ArrNewsLink.length; i++){
-        let contentUrl = ArrNewsLink[i];
-        request.get(contentUrl, async function(error,response,body){
-            //console.log(contentUrl);
-            //console.log("======");
-            //본문추출
-            let contentSoup = new JSSoup(body);
-            let SecFinder = contentSoup.findAll('section');
-            let SpanFinder = contentSoup.findAll('span');
-            let PFinder = contentSoup.findAll('p');
-            for (let i=0; i<SecFinder.length; i++){
-                    ArrNewsContent.push(SecFinder[i].text);
-                    //console.log(SecFinder[i].text);
-            }
-            for (let i=0; i<SpanFinder.length; i++){
-                if (SpanFinder[i].attrs.class === "txt_info"){
-                    let temp = SpanFinder[i].text.split('\n').toString();
-                    if (temp.indexOf('입력') != -1){
-                        ArrNewsTime.push(temp); //기사 입력 시간
-                    } else if (temp.indexOf('수정') != -1){
-                        ArrReNewsTime.push(temp); //기사 수정 시간
-                    } else {
-                        ArrReporterName.push(temp); //기레기
-                    }
-                }
-            }
-            for (let i=0; i<PFinder.length; i++){
-                if (PFinder[i].attrs.class === "link_figure"){
-                    ArrNewsImg.push(PFinder[i].nextElement.attrs.src); //본문 내 이미지
-                }
-            }
-            //console.log(ArrNewsImg);
-        })
-    }
+    ArrNewsLink.forEach(a => {
+        console.log(a)
+    })
 });
