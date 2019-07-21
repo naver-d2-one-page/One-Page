@@ -165,7 +165,7 @@ const style = html`
   border-radius: 0;
   padding: 0.75rem 1.25rem 0.75rem 2rem;
   transition: width 0.4s ease-in-out;
-  line-height: 0;
+  line-height: 0;ㄹ
 }
 
 </style>
