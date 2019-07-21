@@ -8,6 +8,7 @@ const iconv = require('iconv-lite');
 const cheerio = require('cheerio')
 const moment = require('moment');
 const mysql = require('mysql');
+require('dotenv').config();
 let date = moment().format('YYYY-MM-DD HH:mm:ss'); 
 // require('moment-timezone'); 
 let category = ["정치","경제","사회","생활/문화","세계","IT/과학"]
@@ -19,11 +20,11 @@ let requestOptions = { method: "GET" ,
                        encoding: null }; 
 let dbconnect = () => { 
     let connection =  mysql.createConnection({
-        host: '',
-        post: ,
-        user: '',
-        password: '',
-        database: ''
+        host: process.env.HOST,
+        port: process.env.PORT,
+        user: process.env.USER,
+        password: process.env.PASSWORD,
+        database: process.env.DATABASE
     });
     return connection
 }
