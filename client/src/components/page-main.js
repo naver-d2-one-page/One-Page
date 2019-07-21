@@ -101,7 +101,7 @@ export class PageMain extends LitRender(HTMLElement) {
 			if (element.localName === `br`) {
 				return
 			}
-			cㅇonsole.log(element)
+			console.log(element)
 		})
 
 		return div.querySelector(`.article_body`)
