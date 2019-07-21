@@ -72,13 +72,44 @@ export class PageMain extends LitRender(HTMLElement) {
 		// Naver 인쇄모드		
 		div = doc.querySelector(`.content`)
 		console.info(`HTML: `, div)
-		this.getTitlte(div)
+		this.getTitle(div)
+		this.getPressLogo(div)
+		this.getInputTime(div)
+		this.getImage(div)
+		this.getNewsContent(div)
 		return div		
 	}
 
-	getTitlte(div) {
+	getTitle(div) {
 		console.info(`TITLE: `, div.querySelector(`h3`))
 		return div.querySelector(`h3`)
+	}
+
+	getPressLogo(a) {
+		console.info(`Press Logo: `,a.querySelector(`.press_logo`))
+		return a.querySelector(`.press_logo`)
+	}
+
+	getInputTime(span) {
+		console.info(`Input Time: `,span.querySelector(`.t11`))
+		return span.querySelector(`.t11`)
+	}
+
+	getNewsContent(div){
+		console.log(`===Body===`)
+		div.querySelector(`.article_body`).childNodes.forEach(element => {
+			if (element.localName === `br`) {
+				return
+			}
+			cㅇonsole.log(element)
+		})
+
+		return div.querySelector(`.article_body`)
+	}
+
+	getImage(img) {
+		console.info(`Image File: `,img.querySelectorAll(`img:not([src*="logo"])`))
+		return img.querySelectorAll(`img:not([src*="logo"])`)
 	}
 
 	render() {
