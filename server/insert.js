@@ -19,11 +19,11 @@ let requestOptions = { method: "GET" ,
                        encoding: null }; 
 let dbconnect = () => { 
     let connection =  mysql.createConnection({
-        host: '106.10.53.225',
-        post: 3306,
-        user: 'root',
-        password: 'dnrxo`1`1',
-        database: 'd2'
+        host: '',
+        post: ,
+        user: '',
+        password: '',
+        database: ''
     });
     return connection
 }
