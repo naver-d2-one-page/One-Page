@@ -98,13 +98,16 @@ export class PageMain extends LitRender(HTMLElement) {
 	getNewsContent(div){
 		const result = document.createElement(`div`)
 		result.classList.add(`article-body`)
+		console.groupCollapsed(`BODY`)
 		div.querySelector(`.article_body`).childNodes.forEach(element => {
 			if (element.localName === `br`) {
 				return
 			}
+			console.info(element)
 			result.appendChild(element.cloneNode(true))
 		})
-		console.info(`BODY: `, result)
+		console.groupEnd()
+		console.info(`BODY-RESULT: `, result)
 		return result
 	}
 
