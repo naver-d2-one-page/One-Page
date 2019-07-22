@@ -7,6 +7,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 		super()
 
 		this._handlers = {}
+		this.style.display = `none`
 
 		this.attachShadow({ mode: `open` })
 
@@ -28,18 +29,18 @@ export class ModalNews extends LitRender(HTMLElement) {
 		root.removeEventListener(`click`, this._handlers.onClick)
 	}
     
-	_onClick(event) {		
-		if (event.target.closest(`.close-modal`)) {
+	_onClick(event) {	
+		if (event.target.classList.contains(`close-modal`)) {
 			this.hide()
 		}
 	}
     
 	empty() {
-		this.shadowRoot.querySelector(`.modal-news`).innerHTML = ``
+		this.shadowRoot.querySelector(`.news-content`).innerHTML = ``
 	}
     
 	addContent(element) {
-		this.shadowRoot.querySelector(`.modal-news`).appendChild(element)
+		this.shadowRoot.querySelector(`.news-content`).appendChild(element)
 	}
     
 	show() {
@@ -54,34 +55,39 @@ export class ModalNews extends LitRender(HTMLElement) {
 		return html`
         <link rel="stylesheet" type="text/css" href="./src/css/foundation-icons.css">
         ${style}
-        <span class="close-modal"><i class="fi-x-circle size-72"></i></span>
-		<div class="modal-news"></div>
+        <span class="close-modal"><i class="fi-x-circle size-72 close-modal"></i></span>
+		<div class="news-content"></div>
         `
 	}
 }
 
 const style = html`
 <style>	
-:host {
-    display: none;
+*::-webkit-scrollbar {
+	width: 0;
 }
 
-.modal-news {    
+.news-content {    
     position: fixed;
     top: 2.5vh;
     left: 2.5vw;
 	width: 95vw;
-    height: 95vh;
+	height: 95vh;
+	padding: 20px;
+	box-sizing: border-box;
     background-color: white;
     border-radius: 5px;
     overflow: scroll;
-    animation: 0.2s show ease-in-out;
+    -webkit-animation: 0.2s show ease-in-out;
+			animation: 0.2s show ease-in-out;
+	-webkit-box-shadow: 0 17px 50px rgba(0, 0, 0, 0.19), 0 12px 15px rgba(0, 0, 0, 0.24);
+	        box-shadow: 0 17px 50px rgba(0, 0, 0, 0.19), 0 12px 15px rgba(0, 0, 0, 0.24);
 }
 
 .close-modal {    
     position: fixed;
-    top: 20px;
-    right: 50px; 
+    top: 30px;
+    right: 70px; 
     cursor: pointer;
     z-index: 200;
 }
@@ -92,13 +98,27 @@ const style = html`
     color: lightgray;
 }
 
-@keyframes show {
+@-webkit-keyframes show {
   from {
-    transform: scale(0)
+    -webkit-transform: scale(0);
+            transform: scale(0)
   }
 
   to {
-    transform: scale(1)
+    -webkit-transform: scale(1);
+            transform: scale(1)
+  }
+}
+
+@keyframes show {
+  from {
+    -webkit-transform: scale(0);
+            transform: scale(0)
+  }
+
+  to {
+    -webkit-transform: scale(1);
+            transform: scale(1)
   }
 }
 

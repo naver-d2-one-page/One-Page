@@ -30,24 +30,27 @@ export class PageMain extends LitRender(HTMLElement) {
 		root.removeEventListener(`keydown`, this._handlers.onEnter)
 	}
 
-	_onEnter(event) {				
+	_onEnter(event) {
 		if (event.target.classList.contains(`type-url`) && event.key === `Enter`) {
-			const url = event.target.value					
+			const url = event.target.value
 			this.loadXhr(url)
 		}
 	}
 
 	loadXhr(url) {
 		const xhr = new XMLHttpRequest()
-
+		const _url = new URL(url)
+		const host = _url.host
+		const path = _url.pathname
+		const search = _url.search
 		if(!xhr) {
 			throw new Error(`XHR 호출 불가`)
 		}
 
-		xhr.open(`GET`, `https://106.10.53.225:8080/${url}`)
-		xhr.addEventListener(`readystatechange`, () => {
-			if (xhr.readyState === xhr.DONE) {
-				if (xhr.status === 200 || xhr.status === 201) {
+		xhr.open(`GET`, `https://cors.kro.kr/${host}${path}${search}`)
+		xhr.addEventListener(`readystatechange`, () => {			
+			if (xhr.readyState === xhr.DONE) {				
+				if (xhr.status === 200 || xhr.status === 201) {					
 					const _html = xhr.responseText
 					const parser = new DOMParser()
 					const doc = parser.parseFromString(_html, `text/html`)
@@ -99,7 +102,7 @@ export class PageMain extends LitRender(HTMLElement) {
 		const result = document.createElement(`div`)
 		result.classList.add(`article-body`)
 		console.groupCollapsed(`BODY`)
-		div.querySelector(`.article_body`).childNodes.forEach(element => {
+		Array.from(div.querySelector(`.article_body`).childNodes).forEach(element => {
 			if (element.localName === `br`) {
 				return
 			}
