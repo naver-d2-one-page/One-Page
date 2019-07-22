@@ -6,14 +6,42 @@
 const request = require('request');
 const iconv = require('iconv-lite');
 const cheerio = require('cheerio')
+const moment = require('moment');
+const mysql = require('mysql');
+require('dotenv').config();
+let date = moment().format('YYYY-MM-DD HH:mm:ss'); 
+// require('moment-timezone'); 
 let category = ["정치","경제","사회","생활/문화","세계","IT/과학"]
+let dbcategory = ["polity","economy","society","living","world","IT"]
 let url = "https://news.naver.com/";
 let requestOptions = { method: "GET" , 
                        uri: url ,
                        headers: { "User-Agent": "Mozilla/5.0" } ,
                        encoding: null }; 
+let dbconnect = () => { 
+    let connection =  mysql.createConnection({
+        host: process.env.HOST,
+        port: process.env.PORT,
+        user: process.env.USER,
+        password: process.env.PASSWORD,
+        database: process.env.DATABASE
+    });
+    return connection
+}
+let dbinsert = (con,category,title,link,currentime) => {
+    con.query('insert into '+dbcategory[category]+' values(?,?,?,?,?)', [0,category, title,link,currentime], function (err, rows, fields) {
+        if (!err) {
+            console.log("success")
+        } else {
+            console.log('err : ' + err)
+        }
+    });
+}
+
 
 request.get(requestOptions, function(error,response,body){
+    let con = dbconnect()
+    con.connect()
     let tempbody = Buffer.from(body)   
  	let strContents = iconv.decode(tempbody, 'EUC-KR').toString();
     let $ = cheerio.load(strContents)
@@ -28,8 +56,15 @@ request.get(requestOptions, function(error,response,body){
             url = url.replace('read.nhn?mode=LSD&mid=shm&sid1=10'+i+'&','tool/print.nhn?');
             console.log(title);
             console.log(url);
+
             console.log("\n")
+            dbinsert(con,i,title,url,date)
+            
         }
         console.log("\n\n\n")
     }
+    // let date = (new Date()).toJSON().slice(0, 19).replace(/[T]/g, ' ')
+    // console.log(date)
+    con.end()
+    
 });
