@@ -36,11 +36,15 @@ export class ModalNews extends LitRender(HTMLElement) {
 	}
     
 	empty() {
-		this.shadowRoot.querySelector(`.news-content`).innerHTML = ``
+		this.shadowRoot.querySelector(`.news-content`).innerHTML = `
+			<div class="news-header"></div>
+			<div class="news-body"></div>
+			<div class="news-footer"></div>
+		`
 	}
     
-	addContent(element) {
-		this.shadowRoot.querySelector(`.news-content`).appendChild(element)
+	addContent(parent = `.news-content`, element) {
+		this.shadowRoot.querySelector(parent).appendChild(element)
 	}
     
 	show() {
@@ -56,7 +60,11 @@ export class ModalNews extends LitRender(HTMLElement) {
         <link rel="stylesheet" type="text/css" href="./src/css/foundation-icons.css">
         ${style}
         <span class="close-modal"><i class="fi-x-circle size-72 close-modal"></i></span>
-		<div class="news-content"></div>
+		<div class="news-content news-wrap">
+			<div class="news-header"></div>
+			<div class="news-body"></div>
+			<div class="news-footer"></div>
+		</div>
         `
 	}
 }
@@ -124,6 +132,31 @@ const style = html`
 
 .hide-content {
     display: none;
+}
+
+.news-wrap {
+	display: grid;
+  grid-template-areas:
+    "news-header"
+    "news-body"
+    "news-footer";
+}
+
+.news-header {
+	grid-area: news-header;
+}
+
+.news-body {
+  display: grid;
+  grid-area: news-body;
+  grid-template-rows: repeat(auto-fit, minmax(250px, auto));
+  grid-auto-flow: row;
+  margin: 0 auto;
+  overflow: scroll;
+}
+
+.news-footer {
+  grid-area: news-footer;
 }
 
 </style>

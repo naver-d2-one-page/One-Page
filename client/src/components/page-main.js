@@ -57,7 +57,7 @@ export class PageMain extends LitRender(HTMLElement) {
 					const modal = this.shadowRoot.querySelector(`modal-news`)					
 					
 					modal.empty()
-					modal.addContent(this.searchNewsContent(_html, doc))
+					this.searchNewsContent(_html, doc)
 					modal.show()
 				}
 			}
@@ -66,6 +66,7 @@ export class PageMain extends LitRender(HTMLElement) {
 	}
 
 	searchNewsContent(_html, doc) {
+		const modal = this.shadowRoot.querySelector(`modal-news`)
 		let div = document.createElement(`div`)
 		// Daum
 		// doc.querySelectorAll(`.news_view p, .news_view img`).forEach(element => {
@@ -75,11 +76,10 @@ export class PageMain extends LitRender(HTMLElement) {
 		// Naver 인쇄모드		
 		div = doc.querySelector(`.content`)
 		console.info(`HTML: `, div)
-		this.getTitle(div)
-		this.getPressLogo(div)
-		this.getInputTime(div)
-		this.getImage(div)
-		this.getNewsContent(div)
+		modal.addContent(`.news-header`, this.getPressLogo(div))
+		modal.addContent(`.news-header`, this.getTitle(div))
+		modal.addContent(`.news-header`, this.getInputTime(div))
+		modal.addContent(`.news-body`, this.getNewsContent(div))
 		return div		
 	}
 
@@ -98,20 +98,40 @@ export class PageMain extends LitRender(HTMLElement) {
 		return span.querySelector(`.t11`)
 	}
 
-	getNewsContent(div){
+	getNewsContent(div){		
 		const result = document.createElement(`div`)
-		result.classList.add(`article-body`)
+		let _div = div
+		result.classList.add(`news-inner`)
 		console.groupCollapsed(`BODY`)
-		Array.from(div.querySelector(`.article_body`).childNodes).forEach(element => {
+		_div = this.deleteAdAnchor(_div)
+		Array.from(_div.querySelector(`.article_body`).childNodes).forEach(element => {
 			if (element.localName === `br`) {
 				return
 			}
+
 			console.info(element)
 			result.appendChild(element.cloneNode(true))
 		})
 		console.groupEnd()
 		console.info(`BODY-RESULT: `, result)
 		return result
+	}
+
+	deleteAdAnchor(div) {
+		[...div.querySelectorAll(`a`)].forEach(a => {
+			const isNextA = () => a.nextSibling && a.nextSibling.nodeName === `#text`
+			const isPreviousA = () => a.previousSibling && a.previousSibling.nodeName === `#text`
+			if (isNextA()) {
+				a.nextSibling.remove()
+			}
+
+			if (isPreviousA()) {
+				a.previousSibling.remove()
+			}
+			a.remove()
+		})
+
+		return div
 	}
 
 	getImage(img) {
