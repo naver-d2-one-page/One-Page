@@ -144,6 +144,32 @@ const style = html`
 
 .news-header {
 	grid-area: news-header;
+	display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+	align-items: center;
+	border-bottom: 1px solid #DDDDDD;
+	padding: 10px 0;
+	box-sizing: border-box;
+    height: 60px;
+}
+
+.news-header > * {
+	margin: 0 5px;
+}
+
+.news-header > h3 {
+	word-break: keep-all;
+    white-space: pre-wrap;
+    text-overflow: ellipsis;
+    font-size: 2.5vmin;
+    text-align: center;
+}
+
+.news-header > .t11 {
+	font-size: 1vmin;
+    color: #666;
+    padding-top: 1.25vmin;
 }
 
 .news-body {

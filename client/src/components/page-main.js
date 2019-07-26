@@ -31,7 +31,7 @@ export class PageMain extends LitRender(HTMLElement) {
 	}
 
 	_onEnter(event) {
-		if (event.target.classList.contains(`type-url`) && event.key === `Enter`) {
+		if (event.target.classList.contains(`type-url`) && event.code === `Enter`) {
 			const url = event.target.value
 			this.loadXhr(url)
 		}
@@ -48,14 +48,15 @@ export class PageMain extends LitRender(HTMLElement) {
 		}
 
 		xhr.open(`GET`, `https://cors.kro.kr/${host}${path}${search}`)
+		xhr.setRequestHeader(`x-requested-with`, `XMLHttpRequest`)
 		xhr.addEventListener(`readystatechange`, () => {			
 			if (xhr.readyState === xhr.DONE) {				
 				if (xhr.status === 200 || xhr.status === 201) {					
 					const _html = xhr.responseText
 					const parser = new DOMParser()
 					const doc = parser.parseFromString(_html, `text/html`)
-					const modal = this.shadowRoot.querySelector(`modal-news`)					
-					
+					const modal = this.shadowRoot.querySelector(`modal-news`)
+
 					modal.empty()
 					this.searchNewsContent(_html, doc)
 					modal.show()
@@ -66,15 +67,14 @@ export class PageMain extends LitRender(HTMLElement) {
 	}
 
 	searchNewsContent(_html, doc) {
-		const modal = this.shadowRoot.querySelector(`modal-news`)
-		let div = document.createElement(`div`)
+		const modal = this.shadowRoot.querySelector(`modal-news`)		
+		const div = doc.querySelector(`.content`)
 		// Daum
 		// doc.querySelectorAll(`.news_view p, .news_view img`).forEach(element => {
 		// 	div.appendChild(element)					
 		// })
 
-		// Naver 인쇄모드		
-		div = doc.querySelector(`.content`)
+		// Naver 인쇄모드
 		console.info(`HTML: `, div)
 		modal.addContent(`.news-header`, this.getPressLogo(div))
 		modal.addContent(`.news-header`, this.getTitle(div))
@@ -89,7 +89,7 @@ export class PageMain extends LitRender(HTMLElement) {
 	}
 
 	getPressLogo(a) {
-		console.info(`Press Logo: `,a.querySelector(`.press_logo`))
+		console.info(`Press Logo: `, a.querySelector(`.press_logo`))
 		return a.querySelector(`.press_logo`)
 	}
 
