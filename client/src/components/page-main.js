@@ -2,6 +2,7 @@ import { html } from 'lit-html'
 
 import LitRender from '../libs/litRender'
 
+import axios from 'axios'
 import './modal-news.js'
 
 export class PageMain extends LitRender(HTMLElement) {
@@ -31,9 +32,50 @@ export class PageMain extends LitRender(HTMLElement) {
 	}
 
 	_onEnter(event) {
-		if (event.target.classList.contains(`type-url`) && event.code === `Enter`) {
+		if (event.target.classList.contains(`type-url`) && event.key === `Enter`) {
 			const url = event.target.value
-			this.loadXhr(url)
+			this.loadAxios(url)
+		}
+	}
+
+	loadFetch(url) {
+		const _url = new URL(url)
+		const host = _url.host
+		const path = _url.pathname
+		const search = _url.search
+
+		fetch(`https://cors.kro.kr/${host}${path}${search}`, {
+			"method": `GET`,
+			headers: {
+				"User-Agent": `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Whale/1.5.73.16 Safari/537.36`,
+			},
+		}).then(res => res.text())
+			.then(text => {
+				console.info(text)
+			})
+	}
+
+	async loadAxios(url) {
+		const _url = new URL(url)
+		const host = _url.host
+		const path = _url.pathname
+		const search = _url.search
+		const config = {
+			method: `get`,
+			url: `https://cors.kro.kr/${host}${path}${search}`,
+		}
+		
+		try {
+			const _html = await axios(config)
+			const parser = new DOMParser()
+			const doc = parser.parseFromString(_html.data, `text/html`)
+			const modal = this.shadowRoot.querySelector(`modal-news`)
+
+			modal.empty()
+			this.searchNewsContent(_html.data, doc)
+			modal.show()
+		} catch(err) {
+			console.error(err)
 		}
 	}
 
