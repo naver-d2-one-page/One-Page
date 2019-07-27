@@ -118,6 +118,7 @@ export class PageMain extends LitRender(HTMLElement) {
 
 		// Naver 인쇄모드
 		console.info(`HTML: `, div)
+		modal.countImg(doc)
 		modal.addContent(`.news-header`, this.getPressLogo(div))
 		modal.addContent(`.news-header`, this.getTitle(div))
 		modal.addContent(`.news-header`, this.getInputTime(div))
@@ -147,12 +148,14 @@ export class PageMain extends LitRender(HTMLElement) {
 		console.groupCollapsed(`BODY`)
 		_div = this.deleteAdAnchor(_div)
 		Array.from(_div.querySelector(`.article_body`).childNodes).forEach(element => {
-			if (element.localName === `br`) {
+			let _element = element
+			if (_element.localName === `br`) {
 				return
 			}
+			_element = this.textToParagraph(_element)
 
-			console.info(element)
-			result.appendChild(element.cloneNode(true))
+			console.info(_element)
+			result.appendChild(_element.cloneNode(true))
 		})
 		console.groupEnd()
 		console.info(`BODY-RESULT: `, result)
@@ -176,6 +179,19 @@ export class PageMain extends LitRender(HTMLElement) {
 		return div
 	}
 
+	textToParagraph(node) {
+		const p = document.createElement(`p`)
+		if (node.nodeName === `#text` && node.textContent.trim() === ``) {
+			return document.createDocumentFragment()
+		}
+
+		if (node.nodeName === `#text`) {
+			p.appendChild(node)
+			return p
+		}
+		return node
+	}
+
 	getImage(img) {
 		console.info(`Image File: `,img.querySelectorAll(`img:not([src*="logo"])`))
 		return img.querySelectorAll(`img:not([src*="logo"])`)
@@ -186,7 +202,7 @@ export class PageMain extends LitRender(HTMLElement) {
 		${style}
 		<div id="pageMain">			
 			<img class="logo" src="/src/img/logo.png" width="270"/>
-			<h1 class="site-description">사이트 설명</h1>
+			<h1 class="site-description">뉴스 기사를 한 화면에!</h1>
 			<input type="search" name="search" placeholder="보고싶은 기사의 URL을 입력해주세요." class="animated-search-form type-url">
         </div>
 		<modal-news />

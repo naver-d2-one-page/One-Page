@@ -7,6 +7,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 		super()
 
 		this._handlers = {}
+		this._imgLength = ``
 		this.style.display = `none`
 
 		this.attachShadow({ mode: `open` })
@@ -55,10 +56,18 @@ export class ModalNews extends LitRender(HTMLElement) {
 		this.style.display = `none`
 	}
 
+	countImg(dom) {
+		const length = dom.querySelectorAll(`.article_body img`).length
+		this._imgLength = length
+		this.invalidate()
+		return length
+	}
+
 	render() {
 		return html`
         <link rel="stylesheet" type="text/css" href="./src/css/foundation-icons.css">
-        ${style}
+		${style}
+		${setStyle(this._imgLength)}
         <span class="close-modal"><i class="fi-x-circle size-72 close-modal"></i></span>
 		<div class="news-content news-wrap">
 			<div class="news-header"></div>
@@ -67,6 +76,16 @@ export class ModalNews extends LitRender(HTMLElement) {
 		</div>
         `
 	}
+}
+
+function setStyle(count = ``) {
+	return html`
+	<style>
+	.news-body .news-inner {
+		columns: 300px ${count};
+	}
+	</style>
+	`
 }
 
 const style = html`
@@ -109,24 +128,24 @@ const style = html`
 @-webkit-keyframes show {
   from {
     -webkit-transform: scale(0);
-            transform: scale(0)
+            transform: scale(0);
   }
 
   to {
     -webkit-transform: scale(1);
-            transform: scale(1)
+            transform: scale(1);
   }
 }
 
 @keyframes show {
   from {
     -webkit-transform: scale(0);
-            transform: scale(0)
+            transform: scale(0);
   }
 
   to {
     -webkit-transform: scale(1);
-            transform: scale(1)
+            transform: scale(1);
   }
 }
 
@@ -136,10 +155,11 @@ const style = html`
 
 .news-wrap {
 	display: grid;
-  grid-template-areas:
-    "news-header"
-    "news-body"
-    "news-footer";
+	grid-template-areas:
+		"news-header"
+		"news-body"
+		"news-footer";
+    grid-template-rows: 10vh auto 20px;
 }
 
 .news-header {
@@ -149,9 +169,8 @@ const style = html`
     justify-content: center;
 	align-items: center;
 	border-bottom: 1px solid #DDDDDD;
-	padding: 10px 0;
 	box-sizing: border-box;
-    height: 60px;
+    height: 10vh;
 }
 
 .news-header > * {
@@ -173,16 +192,40 @@ const style = html`
 }
 
 .news-body {
-  display: grid;
   grid-area: news-body;
-  grid-template-rows: repeat(auto-fit, minmax(250px, auto));
-  grid-auto-flow: row;
-  margin: 0 auto;
-  overflow: scroll;
+  margin: auto;
 }
+
+.news-body .news-inner {
+	columns: 300px;
+    column-fill: balance;
+    overflow: hidden;
+    margin: auto 0;
+
+	font-size: calc(12px + (26 - 12) * ((100vw - 300px) / (3000 - 300)));
+    line-height: calc(1.3em + (1.5 - 1.2) * ((100vw - 300px)/(3000 - 300)));
+
+	/* display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, auto));
+  	grid-auto-flow: row;
+	height: 100%; */
+}
+
+/* 이미지마다 컬럼 엔터 */
+/* .end_photo_org, .end_photo_org * {
+	break-before: column;
+} */
 
 .news-footer {
   grid-area: news-footer;
+  height: 20px;
+}
+
+img {
+	max-width: 100%;
+    max-height: 70vh;
+    display: block;
+    margin: 0 auto;
 }
 
 </style>
