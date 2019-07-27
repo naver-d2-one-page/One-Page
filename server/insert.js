@@ -29,7 +29,7 @@ let dbconnect = () => {
     return connection
 }
 let dbinsert = (con,category,title,link,currentime) => {
-    con.query('insert into '+dbcategory[category]+' values(?,?,?,?,?)', [0,category, title,link,currentime], function (err, rows, fields) {
+    con.query('insert into '+dbcategory[category]+' values(?,?,?,?,?)', [0,category, title,link,currentime], function (err) {
         if (!err) {
             console.log("success")
         } else {
@@ -43,7 +43,7 @@ request.get(requestOptions, function(error,response,body){
     let con = dbconnect()
     con.connect()
     let tempbody = Buffer.from(body)   
- 	let strContents = iconv.decode(tempbody, 'EUC-KR').toString();
+    let strContents = iconv.decode(tempbody, 'EUC-KR').toString();
     let $ = cheerio.load(strContents)
     let ulFinder = $('.no_bg');
     let totallen= ulFinder.children().length //30개
