@@ -192,8 +192,10 @@ const style = html`
 }
 
 .news-body {
-  grid-area: news-body;
-  margin: auto;
+  	grid-area: news-body;
+  	margin: auto;
+  	overflow: scroll;
+	height: calc(85vh - 60px);
 }
 
 .news-body .news-inner {
