@@ -72,7 +72,7 @@ export class PageMain extends LitRender(HTMLElement) {
 			const modal = this.shadowRoot.querySelector(`modal-news`)
 
 			modal.empty()
-			this.searchNewsContent(_html.data, doc)
+			this.switchURL(modal, host, _html, doc)
 			modal.show()
 		} catch(err) {
 			console.error(err)
@@ -98,9 +98,9 @@ export class PageMain extends LitRender(HTMLElement) {
 					const parser = new DOMParser()
 					const doc = parser.parseFromString(_html, `text/html`)
 					const modal = this.shadowRoot.querySelector(`modal-news`)
-
+					
 					modal.empty()
-					this.searchNewsContent(_html, doc)
+					this.switchURL(modal, host, _html, doc)
 					modal.show()
 				}
 			}
@@ -108,23 +108,42 @@ export class PageMain extends LitRender(HTMLElement) {
 		xhr.send()
 	}
 
-	searchNewsContent(_html, doc) {
+	switchURL(modal, url, _html, doc) {
+		if (url.includes(`daum`)){
+			return modal.addContent(this.searchNewsContentDaum(_html, doc))
+		} else if (url.includes(`naver`)){
+			this.createNewsContent(_html, doc)
+		}
+		return null
+	}
+
+	createNewsContent(_html, doc) {
 		const modal = this.shadowRoot.querySelector(`modal-news`)		
 		const div = doc.querySelector(`.content`)
-		// Daum
-		// doc.querySelectorAll(`.news_view p, .news_view img`).forEach(element => {
-		// 	div.appendChild(element)					
-		// })
 
-		// Naver 인쇄모드
 		console.info(`HTML: `, div)
 		modal.countImg(doc)
 		modal.addContent(`.news-header`, this.getPressLogo(div))
 		modal.addContent(`.news-header`, this.getTitle(div))
 		modal.addContent(`.news-header`, this.getInputTime(div))
-		modal.addContent(`.news-body`, this.getNewsContent(div))
-		return div		
+		modal.addContent(`.news-body`, this.getNewsContent(div))	
 	}
+
+	searchNewsContentDaum(_html, doc) {
+		let div = document.createElement(`div`)
+
+		div = doc.querySelector(`.popup_print`)
+
+		this.getTitleDaum(div)
+		this.getPressLogoDaum(div)
+		this.getInputTimeDaum(div)
+		this.getNewsContentDaum(div)
+		this.getImageDaum(div)
+
+		return div
+	}
+
+	/* Naver Start */
 
 	getTitle(div) {
 		console.info(`TITLE: `, div.querySelector(`h3`))
@@ -196,6 +215,54 @@ export class PageMain extends LitRender(HTMLElement) {
 		console.info(`Image File: `,img.querySelectorAll(`img:not([src*="logo"])`))
 		return img.querySelectorAll(`img:not([src*="logo"])`)
 	}
+
+	/* Naver End */
+
+	/* Daum Start */
+
+	getTitleDaum(div) {
+		console.info(`TITLE: `, div.querySelector(`h3`))
+		return div.querySelector(`h3`)
+	}
+
+	getPressLogoDaum(img) {
+		console.info(`Press Logo: `, img.querySelector(`.thumb_g`))
+		return img.querySelector(`.thumb_g`)
+	}
+
+	getInputTimeDaum(span) {
+		const spans = [...span.querySelectorAll(`.txt_info`)]
+		let resultSpan
+		for (let i = 0; i < spans.length; i++) {
+			let spanText = spans[i].textContent
+
+			if (spanText.includes(`입력`)) {
+				spanText = spanText.split(`입력`)[1]
+				spans[i].textContent = spanText.trim()
+				resultSpan = spans[i]
+				break
+			}
+		}
+		console.info(`Input Time: `, resultSpan)
+		return resultSpan		
+	}
+
+	getNewsContentDaum(dom) {			
+		const article = dom.querySelector(`#harmonyContainer > section`)
+		article.classList.add(`article-body`)
+		
+		console.info(`BODY-RESULT: `, article)
+		return article		
+	}
+
+	getImageDaum(dom) {
+		const imgs = dom.querySelectorAll(`#harmonyContainer > section img`)
+		console.info(`Image File: `, imgs)
+		return imgs
+	}
+
+	/* Daum End */
+
 
 	render() {
 		return html` 
