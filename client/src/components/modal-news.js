@@ -7,7 +7,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 		super()
 
 		this._handlers = {}
-		this._imgLength = ``
+		this._numColumn = 3
 		this.style.display = `none`
 
 		this.attachShadow({ mode: `open` })
@@ -21,7 +21,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 
 		handlers.onClick = this._onClick.bind(this)				
         
-		root.addEventListener(`click`, handlers.onClick)		
+		root.addEventListener(`click`, handlers.onClick)
 	}
 
 	disconnectedCallback() {
@@ -58,16 +58,76 @@ export class ModalNews extends LitRender(HTMLElement) {
 
 	countImg(dom) {
 		const length = dom.querySelectorAll(`.article_body img`).length
-		this._imgLength = length
-		this.invalidate()
-		return length
+		let complete = 0
+		this._numColumn = 3
+
+		dom.querySelectorAll(`.article_body img`).forEach(img => {
+			const getSize = new Image()
+			getSize.src = img.src
+			getSize.onload = () => {
+				const textLength = Math.floor(this.shadowRoot.querySelector(`.news-inner`).textContent.length / 5000)
+				this._numColumn++
+				complete++
+				if (length === complete) {
+					for (let i = 0; i < textLength; i++) {						
+						this._numColumn++
+					}
+					this.autoSetFontSize()
+					this.invalidate()
+				}				
+			}
+		})
 	}
 
-	render() {
+	async autoSetFontSize(scale = 1) {
+		const div = await this.shadowRoot.querySelector(`.news-body`)
+		const innerDiv = div.querySelector(`.news-inner`)
+		let _scale = scale
+		// console.info(`${div.clientHeight} >= ${innerDiv.clientHeight * _scale}`, innerDiv.scrollHeight)
+		
+		if (div.clientHeight >= innerDiv.clientHeight * _scale) {
+			innerDiv.style.top = `50%`
+			div.style.overflow = `hidden`
+			return
+		}
+
+		if (_scale <= 0.7) {			
+			return
+		}
+		_scale -= 0.01
+		_scale = _scale.toFixed(2)
+		innerDiv.style.transform = `translate(-50%, -50%) scale(${_scale})`
+		innerDiv.style.width = `calc(1 / ${_scale} * 100%)`
+		innerDiv.style.top = `calc(50% + ${(_scale * innerDiv.clientHeight - div.clientHeight) / 2}px)`
+		// console.info(_scale, innerDiv.clientHeight)
+		
+		this.autoSetFontSize(_scale)
+	}
+
+	isCompletedImages() {
+		
+	}
+
+	sleep(ms) {
+		return new Promise(resolve => setTimeout(() => resolve(), ms))
+	}
+
+	clearBlankText() {
+		[...this.shadowRoot.querySelectorAll(`.news-inner *`)].forEach(el => {
+			const isImg = () => el.tagName === `IMG` || el.querySelector(`img`)
+			const isBr = el.tagName === `BR`
+			if (el.textContent.length || isImg() || isBr) {
+				return
+			}
+			el.remove()
+		})
+	}
+
+	render() {		
 		return html`
         <link rel="stylesheet" type="text/css" href="./src/css/foundation-icons.css">
 		${style}
-		${setStyle(this._imgLength)}
+		${setStyle(this._numColumn)}
         <span class="close-modal"><i class="fi-x-circle size-72 close-modal"></i></span>
 		<div class="news-content news-wrap">
 			<div class="news-header"></div>
@@ -100,7 +160,7 @@ const style = html`
     left: 2.5vw;
 	width: 95vw;
 	height: 95vh;
-	padding: 20px;
+	padding: 1vh 1vw;
 	box-sizing: border-box;
     background-color: white;
     border-radius: 5px;
@@ -160,6 +220,7 @@ const style = html`
 		"news-body"
 		"news-footer";
     grid-template-rows: 10vh auto 20px;
+	overflow: hidden;
 }
 
 .news-header {
@@ -193,30 +254,70 @@ const style = html`
 
 .news-body {
   	grid-area: news-body;
-  	margin: auto;
+  	/* margin: auto; */
   	overflow: scroll;
-	height: calc(85vh - 60px);
+	height: calc(83vh - 20px);
+	position: relative;
+	-ms-overflow-style: none;
+
+	/* overflow: hidden; */
 }
 
 .news-body .news-inner {
 	columns: 300px;
     column-fill: balance;
     overflow: hidden;
-    margin: auto 0;
+	margin: auto 0;
+	/* min-height: 100%; */
 
-	font-size: calc(12px + (26 - 12) * ((100vw - 300px) / (3000 - 300)));
-    line-height: calc(1.3em + (1.5 - 1.2) * ((100vw - 300px)/(3000 - 300)));
+	/* font-size: calc(12px + (26 - 12) * ((100vw - 300px) / (3000 - 300)));
+    line-height: calc(1.3em + (1.5 - 1.2) * ((100vw - 300px)/(3000 - 300))); */
 
-	/* display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, auto));
-  	grid-auto-flow: row;
+	/* no flex use */
+	/* display: flex;
+	flex-direction: column;
+    flex-flow: column wrap;
 	height: 100%; */
+
+	transform: translate(-50%, -50%) scale(1);
+	width: 100%;
+    top: 50%;
+    left: 50%;
+    position: absolute;	
+}
+
+.news-body .news-inner > * {
+	/* no flex use */
+	/* flex: 0 0 auto;
+	width: 300px;
+	height: min-content; */
 }
 
 /* 이미지마다 컬럼 엔터 */
 /* .end_photo_org, .end_photo_org * {
 	break-before: column;
 } */
+
+.end_photo_org {
+	display: inline-block;
+    flex-direction: column;
+    justify-items: center;
+    width: 100%;
+}
+
+.news-inner em {
+	font-size: small;
+	text-align: center;
+}
+
+.news-inner strong {
+	display: block;
+    padding-left: 5px;
+    margin: 5px 0;
+	border-left: 2px solid #141414;
+	margin-top: 1em;
+    margin-bottom: 1em;
+}
 
 .news-footer {
   grid-area: news-footer;
@@ -227,8 +328,25 @@ img {
 	max-width: 100%;
     max-height: 70vh;
     display: block;
-    margin: 0 auto;
+    margin: 0 auto !important;
 }
+
+table {
+	display: inline-block;
+	width: 100%;
+	max-width: 100%;
+	max-height: 70vh;
+    margin: 0 auto !important;
+}
+
+table * {
+	display: block;
+	width: 100% !important;
+}
+
+/* tbody {
+	display: inline-block;
+} */
 
 </style>
 `

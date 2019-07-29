@@ -35,6 +35,7 @@ export class PageMain extends LitRender(HTMLElement) {
 		if (event.target.classList.contains(`type-url`) && event.key === `Enter`) {
 			const url = event.target.value
 			this.loadAxios(url)
+			// this.loadXhr(url)
 		}
 	}
 
@@ -85,6 +86,8 @@ export class PageMain extends LitRender(HTMLElement) {
 		const host = _url.host
 		const path = _url.pathname
 		const search = _url.search
+		const modal = this.shadowRoot.querySelector(`modal-news`)
+
 		if(!xhr) {
 			throw new Error(`XHR 호출 불가`)
 		}
@@ -96,8 +99,7 @@ export class PageMain extends LitRender(HTMLElement) {
 				if (xhr.status === 200 || xhr.status === 201) {					
 					const _html = xhr.responseText
 					const parser = new DOMParser()
-					const doc = parser.parseFromString(_html, `text/html`)
-					const modal = this.shadowRoot.querySelector(`modal-news`)
+					const doc = parser.parseFromString(_html, `text/html`)					
 					
 					modal.empty()
 					this.switchURL(modal, host, _html, doc)
@@ -126,7 +128,8 @@ export class PageMain extends LitRender(HTMLElement) {
 		modal.addContent(`.news-header`, this.getPressLogo(div))
 		modal.addContent(`.news-header`, this.getTitle(div))
 		modal.addContent(`.news-header`, this.getInputTime(div))
-		modal.addContent(`.news-body`, this.getNewsContent(div))	
+		modal.addContent(`.news-body`, this.getNewsContent(div))
+		modal.clearBlankText()
 	}
 
 	searchNewsContentDaum(_html, doc) {
