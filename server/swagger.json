@@ -1,0 +1,168 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "One-Page API",
+    "description": "One-Page API",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "it",
+      "description": "API for get it news link"
+    },
+    {
+      "name": "economy",
+      "description": "API for get economy news link"
+    },
+    {
+        "name": "polity",
+        "description": "API for get polity news link"
+    },
+    {
+        "name": "society",
+        "description": "API for get society news link"
+    },
+    {
+        "name": "world",
+        "description": "API for get world news link"
+    },
+    {
+        "name": "living",
+        "description": "API for get living news link"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/it": {
+      "get": {
+        "tags": [
+          "it"
+        ],
+        "summary": "Get all it news link list",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+                "$ref": "#/definitions/result"
+            }
+          }
+        }
+      }
+    },
+    "/economy": {
+        "get": {
+          "tags": [
+            "economy"
+          ],
+          "summary": "Get all economy news link list",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/result"
+              }
+            }
+          }
+        }
+     },
+     "/living": {
+         "get": {
+           "tags": [
+             "living"
+           ],
+           "summary": "Get all living news link list",
+           "responses": {
+             "200": {
+               "description": "OK",
+               "schema": {
+                "$ref": "#/definitions/result"
+               }
+             }
+           }
+         }
+      },
+      "/society": {
+          "get": {
+            "tags": [
+              "society"
+            ],
+            "summary": "Get all society news link list",
+            "responses": {
+              "200": {
+                "description": "OK",
+                "schema": {
+                    "$ref": "#/definitions/result"
+                }
+              }
+            }
+          }
+       },
+       "/world": {
+           "get": {
+             "tags": [
+               "world"
+             ],
+             "summary": "Get all world news link list",
+             "responses": {
+               "200": {
+                 "description": "OK",
+                 "schema": {
+                    "$ref": "#/definitions/result"
+                 }
+               }
+             }
+           }
+        },
+        "/polity": {
+            "get": {
+              "tags": [
+                "polity"
+              ],
+              "summary": "Get all polity news link list",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "$ref": "#/definitions/result"
+                  }
+                }
+              }
+            }
+         }
+  },
+  "definitions": {
+    "result": {
+        "required": [
+          "result",
+          "count"
+        ],
+        "properties": {
+          "result": {
+            "type": "[string]"
+          },
+          "count": {
+            "type": "int"
+          }
+        }
+      }
+  }
+   
+}
+  
+
+
+    
