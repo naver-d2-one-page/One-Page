@@ -359,6 +359,13 @@ const style = html`
 	display: inline-block;
 } */
 
+@media all and (max-width: 450px) {
+	.news-inner img {
+		max-height: none;
+		width: 100%;
+	}
+}
+
 </style>
 `
 
