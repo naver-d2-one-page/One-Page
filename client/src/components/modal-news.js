@@ -85,23 +85,19 @@ export class ModalNews extends LitRender(HTMLElement) {
 		const div = await this.shadowRoot.querySelector(`.news-body`)
 		const innerDiv = div.querySelector(`.news-inner`)
 		let _scale = scale
-		// console.info(`${div.clientHeight} >= ${innerDiv.clientHeight * _scale}`, innerDiv.scrollHeight)
 		
 		if (div.clientHeight >= innerDiv.clientHeight * _scale) {
-			innerDiv.style.top = `50%`
-			div.style.overflow = `hidden`
+			// innerDiv.style.top = `50%`
+			// div.style.overflow = `hidden`
+			this.increaseHeight(_scale)
 			return
 		}
 
-		if (_scale <= 0.65) {			
+		if (_scale <= 0.65) {
 			return
 		}
 		_scale -= 0.01
-		_scale = _scale.toFixed(2)
-		innerDiv.style.transform = `translate(-50%, -50%) scale(${_scale}) perspective(1px) translate3d(0,0,0)`
-		innerDiv.style.width = `calc(1 / ${_scale} * 100%)`
-		innerDiv.style.top = `calc(50% + ${(_scale * innerDiv.clientHeight - div.clientHeight) / 2}px)`
-		// console.info(_scale, innerDiv.clientHeight)
+		this.setNoScroll(div, innerDiv, _scale)
 		
 		this.autoSetScale(_scale)
 	}
@@ -118,6 +114,30 @@ export class ModalNews extends LitRender(HTMLElement) {
 	activeFunc() {
 		this.shadowRoot.querySelector(`.news-body`).style.overflow = `scroll`
 		this.autoSetScale()
+	}
+
+	async increaseHeight(_scale = 1) {
+		const div = await this.shadowRoot.querySelector(`.news-body`)
+		const innerDiv = div.querySelector(`.news-inner`)
+		let __scale = _scale
+
+		__scale += 0.01
+		this.setNoScroll(div, innerDiv, __scale)
+
+		if (div.clientHeight < innerDiv.clientHeight * __scale) {
+			__scale -= 0.01
+			this.setNoScroll(div, innerDiv, __scale)
+			innerDiv.style.top = `50%`
+			div.style.overflow = `hidden`
+			return
+		}
+		this.increaseHeight(__scale)
+	}
+
+	setNoScroll(div, innerDiv, scale) {
+		innerDiv.style.transform = `translate(-50%, -50%) scale(${scale}) perspective(1px) translate3d(0,0,0)`
+		innerDiv.style.width = `calc(1 / ${scale} * 100%)`
+		innerDiv.style.top = `calc(50% + ${(scale * innerDiv.clientHeight - div.clientHeight) / 2}px)`
 	}
 
 	sleep(ms) {
