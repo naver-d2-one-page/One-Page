@@ -93,7 +93,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 			return
 		}
 
-		if (_scale <= 0.7) {			
+		if (_scale <= 0.65) {			
 			return
 		}
 		_scale -= 0.01
@@ -296,6 +296,7 @@ const style = html`
     top: 50%;
     left: 50%;
     position: absolute;	
+	font-size: 16px;
 }
 
 .news-body .news-inner > * {

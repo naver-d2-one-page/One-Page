@@ -310,22 +310,149 @@ const style = html`
 	color: #3498DB;
     text-align: center;
     margin: 1vh 0;
-	font-size: 2vw;
+	font-size: 2vmax;
 	font-weight: bold;
 }
 
 .animated-search-form[type=search] {
 	margin-top: 10px;
-	min-width: 30vw;
+	min-width: 50vw;
 	width: 400px;
 	max-width: 95vw;
 	border: 0.125rem solid #e6e6e6;
 	box-shadow: 0 0 3.125rem rgba(0, 0, 0, 0.18);
 	border-radius: 0;
-	padding: 0.75rem 1.25rem 0.75rem 2rem;
+	padding: 5px 10px;
 	transition: width 0.4s ease-in-out;
 	line-height: 0;
-	font-size: 0.7vw;	
+	font-size: 0.7vmax;	
+	text-align: center;
+}
+
+/* 세로비율 START */
+
+@media only screen and (max-width : 480px) and (orientation : portrait) {
+	.site-description {
+		font-size: 9vw;
+	}
+
+	.animated-search-form[type=search] {
+		font-size: 10px;
+	}
+}
+
+@media only screen and (min-width : 480px) and (max-width : 760px) and (orientation : portrait) {
+	.site-description {
+		font-size: 5.5vw;
+	}
+
+	.animated-search-form[type=search] {
+		font-size: 12px;
+  	}
+}
+
+@media only screen and (min-width : 760px) and (max-width : 1024px) and (orientation : portrait) {
+	.site-description {
+		font-size: 4vw;
+	}
+
+	.animated-search-form[type=search] {
+		font-size: 16px;
+  	}
+}
+
+@media only screen and (min-width : 1024px) and (max-width : 1920px) and (orientation : portrait) {
+	.site-description {
+		font-size: 3vw;
+	}
+
+	.animated-search-form[type=search] {
+		font-size: 16px;
+  	}
+}
+
+/* 세로비율 END */
+
+
+/* 가로비율 START */
+
+@media only screen and (max-width : 480px) and (orientation : landscape) {
+  .site-description {
+	font-size: 5.5vw;
+  }
+
+  .animated-search-form[type=search] {
+	font-size: 10px;
+  }
+}
+
+@media only screen and (min-width : 480px) and (max-width : 640px) and (orientation : landscape) {
+	.site-description {
+		font-size: 6vw;
+	}
+
+	.animated-search-form[type=search] {
+		font-size: 12px;
+  	}
+}
+
+@media only screen and (min-width : 640px) and (max-width : 920px) and (orientation : landscape) {
+	.site-description {
+		font-size: 4.5vw;
+	}
+
+	.animated-search-form[type=search] {
+		font-size: 14px;
+  	}
+}
+
+@media only screen and (min-width : 920px) and (max-width : 1280px) and (orientation : landscape) {
+	.site-description {
+		font-size: 4vw;
+	}
+
+	.animated-search-form[type=search] {
+		font-size: 16px;
+  	}
+}
+
+@media only screen and (min-width : 1280px) and (max-width : 1920px) and (orientation : landscape) {
+	.logo {
+		min-width: 25vw;
+	}
+
+	.site-description {
+		font-size: 3vw;
+	}
+
+	.animated-search-form[type=search] {
+		font-size: 18px;
+  	}
+}
+
+@media only screen and (min-width : 1920px) and (orientation : landscape) {
+	.logo {
+		min-width: 25vw;
+	}
+
+	.site-description {
+		font-size: 3vw;
+	}
+
+	.animated-search-form[type=search] {
+		font-size: 1.5vw;
+  	}
+}
+
+/* 가로비율 END */
+
+@media only screen and (min-width : 768px) and (max-width : 1024px) and (orientation : landscape) {
+  /* Styles */
+}
+
+/* iPads (portrait) ----------- */
+@media only screen and (min-width : 768px) and (max-width : 1024px) and (orientation : portrait) {
+  /* Styles */
 }
 
 </style>
