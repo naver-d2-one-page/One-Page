@@ -97,7 +97,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 			return
 		}
 		_scale -= 0.01
-		this.setNoScroll(div, innerDiv, _scale)
+		this.setNoScroll(div, innerDiv, _scale, 1)
 		
 		this.autoSetScale(_scale)
 	}
@@ -121,6 +121,10 @@ export class ModalNews extends LitRender(HTMLElement) {
 		const innerDiv = div.querySelector(`.news-inner`)
 		let __scale = _scale
 
+		// if (__scale < 2) {
+		// 	return
+		// }
+
 		__scale += 0.01
 		this.setNoScroll(div, innerDiv, __scale)
 
@@ -134,8 +138,8 @@ export class ModalNews extends LitRender(HTMLElement) {
 		this.increaseHeight(__scale)
 	}
 
-	setNoScroll(div, innerDiv, scale) {
-		innerDiv.style.transform = `translate(-50%, -50%) scale(${scale}) perspective(1px) translate3d(0,0,0)`
+	setNoScroll(div, innerDiv, scale, sharp = 0) {
+		innerDiv.style.transform = `translate(-50%, -50%) scale(${scale}) perspective(${sharp}px) translate3d(0,0,0)`
 		innerDiv.style.width = `calc(1 / ${scale} * 100%)`
 		innerDiv.style.top = `calc(50% + ${(scale * innerDiv.clientHeight - div.clientHeight) / 2}px)`
 	}
@@ -311,7 +315,7 @@ const style = html`
     flex-flow: column wrap;
 	height: 100%; */
 
-	transform: translate(-50%, -50%) scale(1) perspective(1px) translate3d(0,0,0);
+	transform: translate(-50%, -50%) scale(1) perspective(0px) translate3d(0,0,0);
 	width: 100%;
     top: 50%;
     left: 50%;
