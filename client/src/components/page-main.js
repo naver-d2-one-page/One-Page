@@ -149,17 +149,17 @@ export class PageMain extends LitRender(HTMLElement) {
 	/* Naver Start */
 
 	getTitle(div) {
-		console.info(`TITLE: `, div.querySelector(`h3`))
+		// console.info(`TITLE: `, div.querySelector(`h3`))
 		return div.querySelector(`h3`)
 	}
 
 	getPressLogo(a) {
-		console.info(`Press Logo: `, a.querySelector(`.press_logo`))
+		// console.info(`Press Logo: `, a.querySelector(`.press_logo`))
 		return a.querySelector(`.press_logo`)
 	}
 
 	getInputTime(span) {
-		console.info(`Input Time: `,span.querySelector(`.t11`))
+		// console.info(`Input Time: `,span.querySelector(`.t11`))
 		return span.querySelector(`.t11`)
 	}
 
@@ -167,7 +167,7 @@ export class PageMain extends LitRender(HTMLElement) {
 		const result = document.createElement(`div`)
 		let _div = div
 		result.classList.add(`news-inner`)
-		console.groupCollapsed(`BODY`)
+		// console.groupCollapsed(`BODY`)
 		_div = this.deleteAdAnchor(_div)
 		Array.from(_div.querySelector(`.article_body`).childNodes).forEach(element => {
 			let _element = element
@@ -176,11 +176,11 @@ export class PageMain extends LitRender(HTMLElement) {
 			}
 			_element = this.textToParagraph(_element)
 
-			console.info(_element)
+			// console.info(_element)
 			result.appendChild(_element.cloneNode(true))
 		})
-		console.groupEnd()
-		console.info(`BODY-RESULT: `, result)
+		// console.groupEnd()
+		// console.info(`BODY-RESULT: `, result)
 		return result
 	}
 
@@ -215,7 +215,7 @@ export class PageMain extends LitRender(HTMLElement) {
 	}
 
 	getImage(img) {
-		console.info(`Image File: `,img.querySelectorAll(`img:not([src*="logo"])`))
+		// console.info(`Image File: `,img.querySelectorAll(`img:not([src*="logo"])`))
 		return img.querySelectorAll(`img:not([src*="logo"])`)
 	}
 
@@ -224,12 +224,12 @@ export class PageMain extends LitRender(HTMLElement) {
 	/* Daum Start */
 
 	getTitleDaum(div) {
-		console.info(`TITLE: `, div.querySelector(`h3`))
+		// console.info(`TITLE: `, div.querySelector(`h3`))
 		return div.querySelector(`h3`)
 	}
 
 	getPressLogoDaum(img) {
-		console.info(`Press Logo: `, img.querySelector(`.thumb_g`))
+		// console.info(`Press Logo: `, img.querySelector(`.thumb_g`))
 		return img.querySelector(`.thumb_g`)
 	}
 
@@ -246,7 +246,7 @@ export class PageMain extends LitRender(HTMLElement) {
 				break
 			}
 		}
-		console.info(`Input Time: `, resultSpan)
+		// console.info(`Input Time: `, resultSpan)
 		return resultSpan		
 	}
 
@@ -254,13 +254,13 @@ export class PageMain extends LitRender(HTMLElement) {
 		const article = dom.querySelector(`#harmonyContainer > section`)
 		article.classList.add(`article-body`)
 		
-		console.info(`BODY-RESULT: `, article)
+		// console.info(`BODY-RESULT: `, article)
 		return article		
 	}
 
 	getImageDaum(dom) {
 		const imgs = dom.querySelectorAll(`#harmonyContainer > section img`)
-		console.info(`Image File: `, imgs)
+		// console.info(`Image File: `, imgs)
 		return imgs
 	}
 

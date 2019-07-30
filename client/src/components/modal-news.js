@@ -78,6 +78,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 				}				
 			}
 		})
+		this.invalidate()
 	}
 
 	async autoSetScale(scale = 1) {
@@ -97,7 +98,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 		}
 		_scale -= 0.01
 		_scale = _scale.toFixed(2)
-		innerDiv.style.transform = `translate(-50%, -50%) scale(${_scale}) perspective(1px)`
+		innerDiv.style.transform = `translate(-50%, -50%) scale(${_scale}) perspective(1px) translate3d(0,0,0)`
 		innerDiv.style.width = `calc(1 / ${_scale} * 100%)`
 		innerDiv.style.top = `calc(50% + ${(_scale * innerDiv.clientHeight - div.clientHeight) / 2}px)`
 		// console.info(_scale, innerDiv.clientHeight)
@@ -191,7 +192,7 @@ const style = html`
 }
 
 .close-modal i::before {
-    font-size: 3vmax;
+    font-size: 2vmax;
     cursor: pointer;
     color: lightgray;
 }
@@ -290,7 +291,7 @@ const style = html`
     flex-flow: column wrap;
 	height: 100%; */
 
-	transform: translate(-50%, -50%) scale(1) perspective(1px);
+	transform: translate(-50%, -50%) scale(1) perspective(1px) translate3d(0,0,0);
 	width: 100%;
     top: 50%;
     left: 50%;
