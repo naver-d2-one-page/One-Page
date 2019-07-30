@@ -8,6 +8,7 @@
   },
   "functions": {
     "predeploy": [
+      "npm run production",
       "npm --prefix \"$RESOURCE_DIR\" run lint"
     ]
   },

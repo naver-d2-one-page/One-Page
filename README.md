@@ -23,54 +23,55 @@ npm install
 ```
 📦client
  ┣ 📂.storybook
- ┃ ┗ 📜config.js 					# storybook.js UI 테스트 config
- ┣ 📂functions						# firebase 서버리스 함수 모음
+ ┃ ┗ 📜config.js			# storybook.js UI 테스트 config
+ ┣ 📂functions				# firebase 서버리스 함수 모음
  ┃ ┣ 📜.eslintrc.js
  ┃ ┣ 📜.gitignore
  ┃ ┣ 📜index.js
  ┃ ┗ 📜package.json
- ┣ 📂public							# 호스팅 Public 폴더
+ ┣ 📂public				# 호스팅 Public 폴더
  ┃ ┣ 📂src
  ┃ ┃ ┣ 📂css
  ┃ ┃ ┃ ┗ 📜foundation.min.css		# foundation 프레임워크 css
  ┃ ┃ ┗ 📂img
  ┃ ┃ ┃ ┗ 📜logo.png
- ┃ ┣ 📜index.css					# Init CSS
- ┃ ┗ 📜index.html					# Init HTML
+ ┃ ┣ 📜index.css			# Init CSS
+ ┃ ┗ 📜index.html			# Init HTML
  ┣ 📂src
- ┃ ┣ 📂components					# View - 재사용 컴포넌트 모음
+ ┃ ┣ 📂components			# View - 재사용 컴포넌트 모음
  ┃ ┃ ┗ 📜page-main.js
  ┃ ┣ 📂libs
- ┃ ┃ ┣ 📜actions.js					# Controller - 전체 Action 모음
- ┃ ┃ ┣ 📜litRender.js				# lit-html sub module
- ┃ ┃ ┣ 📜redux-zero.js				# redux-zero module
- ┃ ┃ ┗ 📜store.js					# Model - Store
+ ┃ ┃ ┣ 📜actions.js			# Controller - 전체 Action 모음
+ ┃ ┃ ┣ 📜litRender.js			# lit-html sub module
+ ┃ ┃ ┣ 📜redux-zero.js			# redux-zero module)
+ ┃ ┃ ┗ 📜store.js			# Model - Store
  ┃ ┣ 📂stories						
- ┃ ┃ ┗ 📜index.stories.js			# UI 테스트 코드 모음
- ┃ ┗ 📜main.js						# Init JS
+ ┃ ┃ ┗ 📜index.stories.js		# UI 테스트 코드 모음
+ ┃ ┗ 📜main.js				# Init JS
  ┣ 📂test
- ┃ ┗ 📜index.html					# 단위 테스트 코드
- ┣ 📜.babelrc						# Babel 설정
+ ┃ ┗ 📜index.html			# 단위 테스트 코드
+ ┣ 📜.babelrc				# Babel 설정
  ┣ 📜.codebeatignore
  ┣ 📜.eslintignore
- ┣ 📜.eslintrc.js					# EsLint 설정
+ ┣ 📜.eslintrc.js			# EsLint 설정
  ┣ 📜.firebaserc
  ┣ 📜.gitignore
- ┣ 📜.travis.yml					# Travis CI 설정
  ┣ 📜database.rules.json
- ┣ 📜firebase.json					# Firebase 설정
+ ┣ 📜firebase.json			# Firebase 설정
  ┣ 📜firestore.indexes.json
  ┣ 📜firestore.rules
  ┣ 📜package-lock.json
- ┣ 📜package.json					# Package.json 설정
+ ┣ 📜package.json			# Package.json 설정
  ┣ 📜postcss.config.js
- ┣ 📜README.md						# README
+ ┣ 📜README.md				# README 파일
  ┣ 📜storage.rules
  ┣ 📜wct.conf.json
- ┗ 📜webpack.config.js				# Webpack 설정
+ ┗ 📜webpack.config.js			# Webpack 설정
 📦server
  ┗ 생성 중
+📜.travis.yml				# Travis CI 설정
 ```
+
 
 ## 테스트하기
 
@@ -103,8 +104,11 @@ npm run bundle
 # Production 버전 배포
 npm run production
 
-## main-bundle.js 생성 후, server에서 구동
-## (이후, 파이어베이스에서 사용할 예정)
+## 전체 Deploy
+firebase deploy
+
+## 호스팅만 Deploy
+firebase deploy --only hosting:op-news
 ```
 
 ## 기타

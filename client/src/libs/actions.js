@@ -1,6 +1,6 @@
 import store from './store'
 // import { render } from 'lit-html'
-import { Main } from '../main.js'
+// import { Main } from '../main.js'
 
 function actionCreator(action) {
 	return function() {
