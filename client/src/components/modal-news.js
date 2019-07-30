@@ -7,7 +7,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 		super()
 
 		this._handlers = {}
-		this._numColumn = 3
+		this._numColumn = 2
 		this.style.display = `none`
 
 		this.attachShadow({ mode: `open` })
@@ -59,13 +59,13 @@ export class ModalNews extends LitRender(HTMLElement) {
 	countImg(dom) {
 		const length = dom.querySelectorAll(`.article_body img`).length
 		let complete = 0
-		this._numColumn = 3
+		this._numColumn = 2
 
 		dom.querySelectorAll(`.article_body img`).forEach(img => {
 			const getSize = new Image()
 			getSize.src = img.src
 			getSize.onload = () => {
-				const textLength = Math.floor(this.shadowRoot.querySelector(`.news-inner`).textContent.length / 5000)
+				const textLength = Math.floor(this.shadowRoot.querySelector(`.news-inner`).textContent.length / 3000)
 				this._numColumn++
 				complete++
 				if (length === complete) {

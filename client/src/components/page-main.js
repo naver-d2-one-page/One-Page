@@ -284,9 +284,9 @@ const style = html`
 <style>	
 #pageMain {
 	display: grid;
-	width: 95vw;
+	width: fit-content;
 	margin: auto;
-	margin-bottom: 100px;
+	margin-bottom: 10vh;
 }
 
 #pageMain > * {
@@ -301,26 +301,31 @@ const style = html`
 
 .logo {
 	box-shadow: 0 0 3.125rem rgba(0, 0, 0, 0.18);
+	min-width: 15vw;
+	width: 250px;
+	max-width: 90vw;
 }
 
 .site-description {
 	color: #3498DB;
     text-align: center;
     margin: 1vh 0;
-	font-size: 2em;
+	font-size: 2vw;
 	font-weight: bold;
 }
 
 .animated-search-form[type=search] {
-  margin-top: 40px;
-  width: 500px;
-  max-width: 95vw;
-  border: 0.125rem solid #e6e6e6;
-  box-shadow: 0 0 3.125rem rgba(0, 0, 0, 0.18);
-  border-radius: 0;
-  padding: 0.75rem 1.25rem 0.75rem 2rem;
-  transition: width 0.4s ease-in-out;
-  line-height: 0;
+	margin-top: 10px;
+	min-width: 30vw;
+	width: 400px;
+	max-width: 95vw;
+	border: 0.125rem solid #e6e6e6;
+	box-shadow: 0 0 3.125rem rgba(0, 0, 0, 0.18);
+	border-radius: 0;
+	padding: 0.75rem 1.25rem 0.75rem 2rem;
+	transition: width 0.4s ease-in-out;
+	line-height: 0;
+	font-size: 0.7vw;	
 }
 
 </style>
