@@ -184,14 +184,14 @@ const style = html`
 
 .close-modal {    
     position: fixed;
-    top: 30px;
-    right: 70px; 
+    top: 3vh;
+    right: 3vw; 
     cursor: pointer;
     z-index: 200;
 }
 
 .close-modal i::before {
-    font-size: 40px;
+    font-size: 3vmax;
     cursor: pointer;
     color: lightgray;
 }
