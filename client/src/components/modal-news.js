@@ -22,6 +22,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 		handlers.onClick = this._onClick.bind(this)				
         
 		root.addEventListener(`click`, handlers.onClick)
+		window.onresize = () => this.resizeThrottler()
 	}
 
 	disconnectedCallback() {
@@ -72,14 +73,14 @@ export class ModalNews extends LitRender(HTMLElement) {
 					for (let i = 0; i < textLength; i++) {						
 						this._numColumn++
 					}
-					this.autoSetFontSize()
-					this.invalidate()
+					this.autoSetScale()
+					this.invalidate()					
 				}				
 			}
 		})
 	}
 
-	async autoSetFontSize(scale = 1) {
+	async autoSetScale(scale = 1) {
 		const div = await this.shadowRoot.querySelector(`.news-body`)
 		const innerDiv = div.querySelector(`.news-inner`)
 		let _scale = scale
@@ -96,16 +97,26 @@ export class ModalNews extends LitRender(HTMLElement) {
 		}
 		_scale -= 0.01
 		_scale = _scale.toFixed(2)
-		innerDiv.style.transform = `translate(-50%, -50%) scale(${_scale})`
+		innerDiv.style.transform = `translate(-50%, -50%) scale(${_scale}) perspective(1px)`
 		innerDiv.style.width = `calc(1 / ${_scale} * 100%)`
 		innerDiv.style.top = `calc(50% + ${(_scale * innerDiv.clientHeight - div.clientHeight) / 2}px)`
 		// console.info(_scale, innerDiv.clientHeight)
 		
-		this.autoSetFontSize(_scale)
+		this.autoSetScale(_scale)
 	}
 
-	isCompletedImages() {
-		
+	resizeThrottler() {
+		clearTimeout(window.resizeTimeout)
+	
+		window.resizeTimeout = setTimeout(() => {
+			window.resizeTimeout = null
+			this.activeFunc()
+		}, 200)
+	}
+
+	activeFunc() {
+		this.shadowRoot.querySelector(`.news-body`).style.overflow = `scroll`
+		this.autoSetScale()
 	}
 
 	sleep(ms) {
@@ -279,7 +290,7 @@ const style = html`
     flex-flow: column wrap;
 	height: 100%; */
 
-	transform: translate(-50%, -50%) scale(1);
+	transform: translate(-50%, -50%) scale(1) perspective(1px);
 	width: 100%;
     top: 50%;
     left: 50%;
@@ -324,14 +335,14 @@ const style = html`
   height: 20px;
 }
 
-img {
+.news-inner img {
 	max-width: 100%;
     max-height: 70vh;
     display: block;
     margin: 0 auto !important;
 }
 
-table {
+.news-inner table {
 	display: inline-block;
 	width: 100%;
 	max-width: 100%;
@@ -339,7 +350,7 @@ table {
     margin: 0 auto !important;
 }
 
-table * {
+.news-inner table * {
 	display: block;
 	width: 100% !important;
 }
