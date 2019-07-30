@@ -15,8 +15,11 @@ findcount = (table) => {
 }
 // IT 테이블 긁어오기
 router.get('/it',  function(req,res){
-    const count = req.query.count
+    let count = req.query.count
     const realcount = findcount('it')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
     con.query('select title,link from IT order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
@@ -28,7 +31,11 @@ router.get('/it',  function(req,res){
 
 //사회 테이블 긁어오기
 router.get('/society',  function(req,res){
-  const count = req.query.count
+    let count = req.query.count
+    const realcount = findcount('society')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
     con.query('select link from society order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
@@ -39,7 +46,11 @@ router.get('/society',  function(req,res){
 
 // 경제 테이블 긁어오기
 router.get('/economy',  function(req,res){
-  const count = req.query.count
+    let count = req.query.count
+    const realcount = findcount('economy')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
     con.query('select link from economy order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
@@ -50,7 +61,11 @@ router.get('/economy',  function(req,res){
 
 // 정치 테이블 긁어오기
 router.get('/polity',  function(req,res){
-    const count = req.query.count
+    let count = req.query.count
+    const realcount = findcount('polity')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
     con.query('select link from polity order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
@@ -61,6 +76,11 @@ router.get('/polity',  function(req,res){
 
 // 생활/문화 테이블 긁어오기
 router.get('/living',  function(req,res){
+    let count = req.query.count
+    const realcount = findcount('living')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
     con.query('select link from living order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
@@ -71,7 +91,11 @@ router.get('/living',  function(req,res){
 
 // 세계뉴스 테이블 긁어오기
 router.get('/world',  function(req,res){
-  const count = req.query.count
+    let count = req.query.count
+    const realcount = findcount('world')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
     con.query('select link from world order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
