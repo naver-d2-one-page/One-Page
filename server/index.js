@@ -1,6 +1,13 @@
 'use strict'
 
+<<<<<<< HEAD
 //기사 링크 전
+=======
+//https://media.daum.net
+//기사 제목, 언론사, 뉴스 등록시간 - txt_info, 이미지 - img태그, 본문 내용표시
+//화면에 보여줄 컨텐츠를 매일 특정 웹 영역을 통해 수집 저장
+
+>>>>>>> dfca6dc68710be43c4e70856e25b82ceea6d7ca8
 const request = require('request');
 let JSSoup = require('jssoup').default;
 let ArrNewsLink = [];       //기사 본문 링크

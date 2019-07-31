@@ -1,4 +1,9 @@
 import store from './store'
+<<<<<<< HEAD
+=======
+// import { render } from 'lit-html'
+// import { Main } from '../main.js'
+>>>>>>> dfca6dc68710be43c4e70856e25b82ceea6d7ca8
 
 function actionCreator(action) {
 	return function() {

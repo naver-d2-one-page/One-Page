@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/naver-d2-one-page/One-Page#readme",
   "dependencies": {
+<<<<<<< HEAD
     "cheerio": "^1.0.0-rc.3",
     "cors-anywhere": "^0.4.1",
     "dotenv": "^8.0.0",
@@ -31,6 +32,13 @@
     "nodemon": "^1.19.1",
     "request": "^2.88.0",
     "swagger-ui-express": "^4.0.7"
+=======
+    "cors-anywhere": "^0.4.1",
+    "forever": "^1.0.0",
+    "jssoup": "0.0.10",
+    "nodemon": "^1.19.1",
+    "request": "^2.88.0"
+>>>>>>> dfca6dc68710be43c4e70856e25b82ceea6d7ca8
   },
   "devDependencies": {
     "eslint": "^6.0.1"
