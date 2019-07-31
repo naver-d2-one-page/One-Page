@@ -109,6 +109,10 @@ export class ModalNews extends LitRender(HTMLElement) {
 
 	makeProgressBar(activeCategory = 0) {
 		const bar = this.shadowRoot.querySelector(`.news-footer ol`)
+		if (this._newsList.length === 0) {
+			return
+		}
+
 		let _activeCategory = activeCategory
 		if (_activeCategory < 0) {
 			_activeCategory = this._newsList.length - 1

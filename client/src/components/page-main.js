@@ -22,14 +22,14 @@ export class PageMain extends LitRender(HTMLElement) {
 		const handlers = this._handlers
 
 		handlers.onClick = this._onClick.bind(this)
-		// handlers.onKeydown = this._onKeydown.bind(this)
+		handlers.onKeydown = this._onKeydown.bind(this)
 		
 		root.addEventListener(`click`, handlers.onClick)
-		// root.addEventListener(`keydown`, handlers.onKeydown)
+		root.addEventListener(`keydown`, handlers.onKeydown)
 		this.resizePage()
-		// window.addEventListener(`resize`, () => {
-		// 	this.resizeThrottler()
-		// })
+		window.addEventListener(`resize`, () => {
+			this.resizeThrottler()
+		})
 	}
 
 	disconnectedCallback() {
@@ -43,6 +43,7 @@ export class PageMain extends LitRender(HTMLElement) {
 		this.clickCategoryList(event)
 		this.clickCategory(event)
 		this.clickNewsView(event)
+		this.clickList(event)
 	}
 
 	clickCategoryList(event) {
@@ -73,16 +74,24 @@ export class PageMain extends LitRender(HTMLElement) {
 		}
 	}
 
-	// _onKeydown() {
-	// 	clearTimeout(window.keydownTimeout)
-	
-	// 	window.keydownTimeout = setTimeout(() => {
-	// 		window.keydownTimeout = null
-	// 		this.loadSearchDB(this.shadowRoot.querySelector(`.type-url`).value)
-	// 	}, 200)
-	// }
+	clickList(event) {
+		const modal = this.shadowRoot.querySelector(`modal-news`)
+		if (event.target.classList.contains(`search-link`)) {
+			this.loadDom(`https://news.naver.com/main/tool/print.nhn?oid=${event.target.dataset.oid}&aid=${event.target.dataset.aid}`, false)
+			modal.show()
+		}
+	}
 
-	loadDom(url) {
+	_onKeydown() {
+		clearTimeout(window.keydownTimeout)
+	
+		window.keydownTimeout = setTimeout(() => {
+			window.keydownTimeout = null
+			this.loadSearchDB(this.shadowRoot.querySelector(`.type-url`).value)
+		}, 200)
+	}
+
+	loadDom(url, isCategory = true) {
 		loadCors(url, _html => {
 			const modal = this.shadowRoot.querySelector(`modal-news`)
 			const parser = new DOMParser()
@@ -91,8 +100,11 @@ export class PageMain extends LitRender(HTMLElement) {
 			const host = _url.host
 			
 			modal.empty()
-			this.switchURL(modal, host, _html, doc)			
-			modal.makeProgressBar(modal._categoryIndex)
+			this.switchURL(modal, host, _html, doc)
+			
+			if (isCategory) {
+				modal.makeProgressBar(modal._categoryIndex)	
+			}			
 		})
 	}
 
@@ -116,27 +128,26 @@ export class PageMain extends LitRender(HTMLElement) {
 		return new Promise(resolve => setTimeout(() => resolve(), ms))
 	}
 
-	// loadSearchDB(searchText = ``) {
-	// 	const ul = this.shadowRoot.querySelector(`.search-text`)
-	// 	if (!searchText.trim()) {
-	// 		ul.innerHTML = ``
-	// 		return
-	// 	}
+	loadSearchDB(searchText = ``) {
+		const ul = this.shadowRoot.querySelector(`.search-text`)
+		if (!searchText.trim()) {
+			ul.innerHTML = ``
+			return
+		}
 
-	// 	const url = `https://news.naver.com/`
+		const url = `https://news.naver.com/`
 
-	// 	loadCors(url, _html => {
-	// 		const parser = new DOMParser()
-	// 		const doc = parser.parseFromString(_html, `text/html`)			
-	// 		ul.innerHTML = ``
-	// 		doc.querySelectorAll(`._sp_each_title`).forEach((a, index) => {
-	// 			if (index >= 5) {
-	// 				return
-	// 			}
-	// 			ul.insertAdjacentHTML(`beforeend`, `<li class="search-link" data-url="${a.href}">${a.textContent}</li>`)				
-	// 		})
-	// 	})
-	// }
+		loadCors(url, _html => {
+			const parser = new DOMParser()
+			const doc = parser.parseFromString(_html, `text/html`)
+			ul.innerHTML = ``
+			doc.querySelectorAll(`a[href*="/main/read.nhn?mode=LSD"]`).forEach(a => {
+				if (a.textContent.includes(searchText)) {
+					ul.insertAdjacentHTML(`beforeend`, `<li class="search-link" data-url="${a.href}" data-oid="${a.href.match(/oid=(.*?)&/)[1]}" data-aid="${a.href.split(`aid=`)[1]}">${a.textContent}</li>`)
+				}
+			})
+		})
+	}
 
 	switchURL(modal, url, _html, doc) {
 		if (url.includes(`daum`)){
@@ -327,10 +338,10 @@ export class PageMain extends LitRender(HTMLElement) {
 				<img class="logo" src="/src/img/logo.png" width="270"/>
 				<h1 class="site-description">네이버 뉴스를 한 눈에!</h1>
 			</div>					
-			<!-- <div class="search-wrap">
-				<input type="search" name="search" placeholder="보고싶은 기사의 URL을 입력해주세요." class="animated-search-form type-url">
+			<div class="search-wrap">
+				<input type="search" name="search" placeholder="네이버 실시간 뉴스를 검색 해보세요.(news.naver.com/ 메인화면만 검색)" class="animated-search-form type-url">
 				<ul class="search-text"></ul>
-			</div> -->
+			</div>
 			<div class="dropdown">
 				<button class="dropbtn">카테고리</button>
 				<div class="dropdown-content">
@@ -360,7 +371,8 @@ const style = html`
 	margin: auto;
 	margin-bottom: 10vh;
 	    grid-template-areas: 
-		"logo category";
+		"logo category"
+		"search search";
 }
 
 #pageMain > .logo, #pageMain > .site-description {
@@ -407,7 +419,11 @@ const style = html`
 }
 
 /* 실시간 검색 CSS */
-/* .animated-search-form[type=search] {
+.search-wrap {
+	grid-area: search;
+}
+
+.animated-search-form[type=search] {
 	margin-top: 10px;
 	min-width: 50vw;
 	width: 400px;
@@ -430,6 +446,8 @@ const style = html`
     overflow: hidden;
 	box-shadow: 0 5px 10px rgba(0,0,0,.2);
 	padding: 0;
+	overflow: scroll;
+    max-height: 180px;
 }
 
 .search-text li {
@@ -447,7 +465,7 @@ const style = html`
 
 .search-text li:last-of-type {
 	padding-bottom: 1vh;
-} */
+}
 
 /* 카테고리 박스 */
 
