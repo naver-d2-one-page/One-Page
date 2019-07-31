@@ -6,9 +6,12 @@ export class ModalNews extends LitRender(HTMLElement) {
 	constructor() {
 		super()
 
+		this._newsList = []
 		this._handlers = {}
 		this._numColumn = 2
 		this.style.display = `none`
+		this._currentNews = 1
+		this._categoryIndex = 0
 
 		this.attachShadow({ mode: `open` })
 
@@ -22,7 +25,9 @@ export class ModalNews extends LitRender(HTMLElement) {
 		handlers.onClick = this._onClick.bind(this)				
         
 		root.addEventListener(`click`, handlers.onClick)
-		window.onresize = () => this.resizeThrottler()
+		window.addEventListener(`resize`, () => {
+			this.resizeThrottler()
+		})
 	}
 
 	disconnectedCallback() {
@@ -32,35 +37,130 @@ export class ModalNews extends LitRender(HTMLElement) {
 	}
     
 	_onClick(event) {	
+		this.clickClose(event)
+		this.clickMoveNews(event)
+		this.clickLeftCategory(event)
+		this.clickRightCategory(event)
+		this.clickPause(event)
+	}
+
+	clickClose(event) {
 		if (event.target.classList.contains(`close-modal`)) {
 			this.hide()
 		}
+	}
+
+	clickMoveNews(event) {
+		if (event.target.classList.contains(`move-news`)) {			
+			this._currentNews = event.target.dataset.step
+			document.querySelector(`page-main`).loadDom(event.target.dataset.url)
+		}
+	}
+
+	clickLeftCategory(event) {
+		if (event.target.classList.contains(`category-move-left`)) {
+			this._categoryIndex--
+			this.makeProgressBar(this._categoryIndex)
+			this.removeActiveProgress()
+			this.shadowRoot.querySelector(`.is-current`).click()
+		}
+	}
+
+	clickRightCategory(event) {
+		if (event.target.classList.contains(`category-move-right`)) {
+			this._categoryIndex++
+			this.makeProgressBar(this._categoryIndex)
+			this.removeActiveProgress()
+			this.shadowRoot.querySelector(`.is-current`).click()
+		}
+	}
+
+	clickPause(event) {
+		if (event.target.classList.contains(`pause`)) {			
+			if (!event.target.classList.contains(`play`)) {
+				event.target.classList.add(`play`)
+				this.clearInrevalPage()
+				return
+			}
+			event.target.classList.remove(`play`)
+			this.setIntervalPage()
+		}
+	}
+
+	removeActiveProgress() {
+		this.shadowRoot.querySelector(`.is-current`).classList.remove(`is-current`)
+		this.shadowRoot.querySelector(`.move-news`).classList.add(`is-current`)
+	}
+
+	setIntervalPage() {
+		this.clearInrevalPage()
+		this.intervalPage = window.setInterval(() => {
+			if (this.shadowRoot.querySelector(`.is-current + *`)) {
+				this.shadowRoot.querySelector(`.is-current + *`).click()
+				return
+			}
+			this.shadowRoot.querySelector(`.category-move-right`).click()
+		}, 5000)
+	}
+
+	clearInrevalPage() {
+		window.clearInterval(this.intervalPage)
+	}
+
+	makeProgressBar(activeCategory = 0) {
+		const bar = this.shadowRoot.querySelector(`.news-footer ol`)
+		let _activeCategory = activeCategory
+		if (_activeCategory < 0) {
+			_activeCategory = this._newsList.length - 1
+		}
+		if (_activeCategory >= this._newsList.length) {
+			_activeCategory = 0
+		}
+
+		this._categoryIndex = _activeCategory
+		this._activeCategory = this._newsList[_activeCategory][0]
+		this.shadowRoot.querySelector(`.show-category strong`).textContent = this._activeCategory
+
+		bar.innerHTML = ``
+		this._newsList.find(each => each[0] === this._activeCategory)[1][`result`].forEach((news, index) => {
+			bar.insertAdjacentHTML(`beforeend`, `<li data-url="${news.link}" class="${index === this._currentNews - 1 ? `is-current` : ``} move-news" data-step="${index + 1}"></li>`)
+		})	
 	}
     
 	empty() {
 		this.shadowRoot.querySelector(`.news-content`).innerHTML = `
 			<div class="news-header"></div>
 			<div class="news-body"></div>
-			<div class="news-footer"></div>
+			<div class="news-footer">
+				<ol class="progress-indicator"></ol>
+				<span class="show-category">
+					<i class="fi-arrow-left size-72 category-move-left"></i>
+					<strong>Category</strong>
+					<i class="fi-arrow-right size-72 category-move-right"></i>
+					<i class="fi-pause size-72 pause"></i>
+				</span>				
+			</div>
 		`
 	}
     
-	addContent(parent = `.news-content`, element) {
-		this.shadowRoot.querySelector(parent).appendChild(element)
+	addContent(parent = `.news-content`, element) {	
+		this.shadowRoot.querySelector(parent).appendChild(element)		
 	}
     
 	show() {
 		this.style.display = `block`
+		document.querySelector(`page-main`).style.transform = `none`
 	}
     
 	hide() {
 		this.style.display = `none`
+		this.clearInrevalPage()
 	}
 
 	countImg(dom) {
 		const length = dom.querySelectorAll(`.article_body img`).length
 		let complete = 0
-		this._numColumn = 2
+		this._numColumn = 2		
 
 		dom.querySelectorAll(`.article_body img`).forEach(img => {
 			const getSize = new Image()
@@ -74,10 +174,13 @@ export class ModalNews extends LitRender(HTMLElement) {
 						this._numColumn++
 					}
 					this.autoSetScale()
-					this.invalidate()					
+					this.invalidate()
 				}				
 			}
 		})
+		if(!length) {
+			this.autoSetScale()
+		}
 		this.invalidate()
 	}
 
@@ -85,15 +188,17 @@ export class ModalNews extends LitRender(HTMLElement) {
 		const div = await this.shadowRoot.querySelector(`.news-body`)
 		const innerDiv = div.querySelector(`.news-inner`)
 		let _scale = scale
-		
+		if (!innerDiv) {
+			return
+		}
+
 		if (div.clientHeight >= innerDiv.clientHeight * _scale) {
-			// innerDiv.style.top = `50%`
-			// div.style.overflow = `hidden`
 			this.increaseHeight(_scale)
 			return
 		}
 
 		if (_scale <= 0.65) {
+			innerDiv.classList.add(`show`)
 			return
 		}
 		_scale -= 0.01
@@ -107,6 +212,9 @@ export class ModalNews extends LitRender(HTMLElement) {
 	
 		window.resizeTimeout = setTimeout(() => {
 			window.resizeTimeout = null
+			if (this.style.display === `none`) {
+				return
+			}
 			this.activeFunc()
 		}, 200)
 	}
@@ -133,6 +241,7 @@ export class ModalNews extends LitRender(HTMLElement) {
 			this.setNoScroll(div, innerDiv, __scale)
 			innerDiv.style.top = `50%`
 			div.style.overflow = `hidden`
+			innerDiv.classList.add(`show`)
 			return
 		}
 		this.increaseHeight(__scale)
@@ -168,7 +277,14 @@ export class ModalNews extends LitRender(HTMLElement) {
 		<div class="news-content news-wrap">
 			<div class="news-header"></div>
 			<div class="news-body"></div>
-			<div class="news-footer"></div>
+			<div class="news-footer">
+				<ol class="progress-indicator">
+					<li class="is-complete" data-step="1"></li>
+					<li class="is-current" data-step="2"></li>
+					<li class="" data-step="3"></li>
+				</ol>
+				<span class="show-category">Category</span>
+			</div>
 		</div>
         `
 	}
@@ -197,7 +313,8 @@ const style = html`
 	width: 95vw;
 	height: 95vh;
 	padding: 1vh 1vw;
-	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	        box-sizing: border-box;
     background-color: white;
     border-radius: 5px;
     overflow: scroll;
@@ -216,9 +333,16 @@ const style = html`
 }
 
 .close-modal i::before {
-    font-size: 2vmax;
+    font-size: 30px;
     cursor: pointer;
-    color: lightgray;
+	color: lightgray;
+	-webkit-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+}
+
+.close-modal i:hover::before {
+	cursor: pointer;
+    color: #4CAF50;
 }
 
 @-webkit-keyframes show {
@@ -250,23 +374,35 @@ const style = html`
 }
 
 .news-wrap {
+	display: -ms-grid;
 	display: grid;
-	grid-template-areas:
+	    grid-template-areas:
 		"news-header"
 		"news-body"
 		"news-footer";
+    -ms-grid-rows: 10vh auto 20px;
     grid-template-rows: 10vh auto 20px;
 	overflow: hidden;
 }
 
 .news-header {
+	-ms-grid-row: 1;
+	-ms-grid-column: 1;
 	grid-area: news-header;
+	display: -webkit-box;
+	display: -ms-flexbox;
 	display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
-	align-items: center;
+    -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+	-webkit-box-align: center;
+	    -ms-flex-align: center;
+	        align-items: center;
 	border-bottom: 1px solid #DDDDDD;
-	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	        box-sizing: border-box;
     height: 10vh;
 }
 
@@ -289,6 +425,8 @@ const style = html`
 }
 
 .news-body {
+  	-ms-grid-row: 2;
+  	-ms-grid-column: 1;
   	grid-area: news-body;
   	/* margin: auto; */
   	overflow: scroll;
@@ -300,8 +438,12 @@ const style = html`
 }
 
 .news-body .news-inner {
-	columns: 300px;
-    column-fill: balance;
+	-webkit-columns: 300px;
+	   -moz-columns: 300px;
+	        columns: 300px;
+    -webkit-column-fill: balance;
+       -moz-column-fill: balance;
+            column-fill: balance;
     overflow: hidden;
 	margin: auto 0;
 	/* min-height: 100%; */
@@ -315,12 +457,22 @@ const style = html`
     flex-flow: column wrap;
 	height: 100%; */
 
-	transform: translate(-50%, -50%) scale(1) perspective(0px) translate3d(0,0,0);
+	-webkit-transform: translate(-50%, -50%) scale(1) perspective(0px) translate3d(0,0,0);
+
+	        transform: translate(-50%, -50%) scale(1) perspective(0px) translate3d(0,0,0);
 	width: 100%;
     top: 50%;
     left: 50%;
     position: absolute;	
 	font-size: 16px;
+
+	opacity: 0;
+    -webkit-transition: opacity 0.2s ease-in;
+    transition: opacity 0.2s ease-in;
+}
+
+.news-body .news-inner.show {
+	opacity: 1;
 }
 
 .news-body .news-inner > * {
@@ -337,7 +489,10 @@ const style = html`
 
 .end_photo_org {
 	display: inline-block;
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
     justify-items: center;
     width: 100%;
 }
@@ -357,8 +512,26 @@ const style = html`
 }
 
 .news-footer {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
   grid-area: news-footer;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+  grid-template-columns: auto auto;
+  -ms-grid-rows: 1fr;
+  grid-template-rows: 1fr;
   height: 20px;
+}
+
+.news-footer > *:nth-child(1) {
+	-ms-grid-row: 1;
+	-ms-grid-column: 1;
+}
+
+.news-footer > *:nth-child(2) {
+	-ms-grid-row: 1;
+	-ms-grid-column: 2;
 }
 
 .news-inner img {
@@ -390,6 +563,172 @@ const style = html`
 		max-height: none;
 		width: 100%;
 	}
+}
+
+/* progress-bar */
+
+.progress-indicator {
+  list-style: none;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  display: table;
+  table-layout: fixed;
+}
+
+.progress-indicator > li {
+  position: relative;
+  display: table-cell;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.progress-indicator > li span {
+  position: absolute;
+  color: #e6e6e6;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.05px;
+  text-transform: uppercase;
+}
+
+.progress-indicator > li::before {
+  content: '';
+  display: block;
+  margin: 0 auto;
+  background: #DDDDDD;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  margin-bottom: 0;
+  line-height: 20px;
+  border-radius: 100%;
+  position: relative;
+  z-index: 1000;
+}
+
+.progress-indicator > li::after {
+  content: '';
+  position: absolute;
+  display: block;
+  background: #e6e6e6;
+  width: 100%;
+  height: 0.15em;
+  top: 50%;
+  -webkit-transform: translateY(-100%);
+          transform: translateY(-100%);
+  left: 50%;
+  margin-left: 1.5em\9;
+  z-index: 0;
+}
+
+.progress-indicator > li:last-child:after {
+  display: none;
+}
+
+.progress-indicator > li.is-complete {
+  color: #1779ba;
+}
+
+.progress-indicator > li.is-complete::before, .progress-indicator > li.is-complete::after {
+  color: #fefefe;
+  background: #1779ba;
+}
+
+.progress-indicator > li.is-complete span {
+  color: #1779ba;
+}
+
+.progress-indicator > li.is-current {
+  color: #4eabe9;
+}
+
+.progress-indicator > li.is-current::before {
+  color: #fefefe;
+  background: #4CAF50;
+}
+
+.progress-indicator > li.is-current span {
+  color: #4eabe9;
+}
+
+.move-news::before {
+	cursor: pointer;
+	-webkit-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;	
+}
+
+.move-news:hover::before {
+	background-color: #4CAF50;
+}
+
+.show-category {
+	display: -ms-grid;
+	display: grid;
+    -ms-grid-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: auto auto auto auto;
+    -ms-grid-rows: 1fr;
+    grid-template-rows: 1fr;
+	font-size: 13px;
+    font-weight: bold;
+    min-width: 110px;
+    text-align: center;
+}
+
+.show-category > *:nth-child(1) {
+	-ms-grid-row: 1;
+	-ms-grid-column: 1;
+}
+
+.show-category > *:nth-child(2) {
+	-ms-grid-row: 1;
+	-ms-grid-column: 2;
+}
+
+.show-category > *:nth-child(3) {
+	-ms-grid-row: 1;
+	-ms-grid-column: 3;
+}
+
+.show-category > *:nth-child(4) {
+	-ms-grid-row: 1;
+	-ms-grid-column: 4;
+}
+
+.show-category strong {
+	margin: 0 5px;
+}
+
+.fi-arrow-right::before, .fi-arrow-left::before, .pause::before {
+	font-size: 18px;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    background-color: #DDDDDD;
+    color: white;
+	line-height: 20px;
+	text-align: center;
+	-webkit-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+}
+
+.fi-arrow-right:hover::before, .fi-arrow-left:hover::before, .pause:hover::before {
+	cursor: pointer;
+	background-color: #4CAF50;
+}
+
+.pause {
+	margin-left: 5px;
+}
+
+.pause::before {
+	content: "";
+}
+
+.pause.play::before {
+	content: "\\f198" !important;
 }
 
 </style>

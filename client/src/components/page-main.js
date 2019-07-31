@@ -2,7 +2,8 @@ import { html } from 'lit-html'
 
 import LitRender from '../libs/litRender'
 
-import axios from 'axios'
+import { loadCors, loadXhr } from '../libs/actions'
+
 import './modal-news.js'
 
 export class PageMain extends LitRender(HTMLElement) {
@@ -20,95 +21,122 @@ export class PageMain extends LitRender(HTMLElement) {
 		const root = this.shadowRoot
 		const handlers = this._handlers
 
-		handlers.onEnter = this._onEnter.bind(this)				
+		handlers.onClick = this._onClick.bind(this)
+		// handlers.onKeydown = this._onKeydown.bind(this)
 		
-		root.addEventListener(`keydown`, handlers.onEnter)		
+		root.addEventListener(`click`, handlers.onClick)
+		// root.addEventListener(`keydown`, handlers.onKeydown)
+		this.resizePage()
+		// window.addEventListener(`resize`, () => {
+		// 	this.resizeThrottler()
+		// })
 	}
 
 	disconnectedCallback() {
 		const root = this.shadowRoot
 
-		root.removeEventListener(`keydown`, this._handlers.onEnter)
+		root.removeEventListener(`click`, this._handlers.onClick)
+		root.removeEventListener(`keydown`, this._handlers.onKeydown)
 	}
 
-	_onEnter(event) {
-		if (event.target.classList.contains(`type-url`) && event.key === `Enter`) {
-			const url = event.target.value
-			this.loadAxios(url)
-			// this.loadXhr(url)
+	_onClick(event) {
+		this.clickCategoryList(event)
+		this.clickCategory(event)
+		this.clickNewsView(event)
+	}
+
+	clickCategoryList(event) {
+		if (event.target.classList.contains(`category-list`)) {
+			event.target.classList.toggle(`active`)
 		}
 	}
 
-	loadFetch(url) {
-		const _url = new URL(url)
-		const host = _url.host
-		const path = _url.pathname
-		const search = _url.search
-
-		fetch(`https://cors.kro.kr/${host}${path}${search}`, {
-			"method": `GET`,
-			headers: {
-				"User-Agent": `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Whale/1.5.73.16 Safari/537.36`,
-			},
-		}).then(res => res.text())
-			.then(text => {
-				console.info(text)
-			})
-	}
-
-	async loadAxios(url) {
-		const _url = new URL(url)
-		const host = _url.host
-		const path = _url.pathname
-		const search = _url.search
-		const config = {
-			method: `get`,
-			url: `https://cors.kro.kr/${host}${path}${search}`,
-		}
-		
-		try {
-			const _html = await axios(config)
-			const parser = new DOMParser()
-			const doc = parser.parseFromString(_html.data, `text/html`)
-			const modal = this.shadowRoot.querySelector(`modal-news`)
-
-			modal.empty()
-			this.switchURL(modal, host, _html, doc)
-			modal.show()
-		} catch(err) {
-			console.error(err)
+	clickCategory(event) {
+		if (event.target.classList.contains(`dropbtn`)) {
+			// this.shadowRoot.querySelectorAll(`.category-list`).forEach(a => {				
+			// 	a.classList.add(`active`)
+			// })
+			this.shadowRoot.querySelector(`.dropdown-content`).classList.toggle(`close`)
 		}
 	}
 
-	loadXhr(url) {
-		const xhr = new XMLHttpRequest()
-		const _url = new URL(url)
-		const host = _url.host
-		const path = _url.pathname
-		const search = _url.search
+	clickNewsView(event) {
+		const array = [`polity`, `economy`, `society`, `living`, `world`, `it`]
 		const modal = this.shadowRoot.querySelector(`modal-news`)
-
-		if(!xhr) {
-			throw new Error(`XHR 호출 불가`)
-		}
-
-		xhr.open(`GET`, `https://cors.kro.kr/${host}${path}${search}`)
-		xhr.setRequestHeader(`x-requested-with`, `XMLHttpRequest`)
-		xhr.addEventListener(`readystatechange`, () => {			
-			if (xhr.readyState === xhr.DONE) {				
-				if (xhr.status === 200 || xhr.status === 201) {					
-					const _html = xhr.responseText
-					const parser = new DOMParser()
-					const doc = parser.parseFromString(_html, `text/html`)					
-					
-					modal.empty()
-					this.switchURL(modal, host, _html, doc)
-					modal.show()
+		if (event.target.classList.contains(`category-submit`)) {
+			modal._newsList = []
+			this.shadowRoot.querySelectorAll(`.category-list`).forEach((li, index) => {
+				if (li.classList.contains(`active`)) {
+					this.loadCategory(array[index])
 				}
+			})					
+		}
+	}
+
+	// _onKeydown() {
+	// 	clearTimeout(window.keydownTimeout)
+	
+	// 	window.keydownTimeout = setTimeout(() => {
+	// 		window.keydownTimeout = null
+	// 		this.loadSearchDB(this.shadowRoot.querySelector(`.type-url`).value)
+	// 	}, 200)
+	// }
+
+	loadDom(url) {
+		loadCors(url, _html => {
+			const modal = this.shadowRoot.querySelector(`modal-news`)
+			const parser = new DOMParser()
+			const doc = parser.parseFromString(_html, `text/html`)
+			const _url = new URL(url)
+			const host = _url.host
+			
+			modal.empty()
+			this.switchURL(modal, host, _html, doc)			
+			modal.makeProgressBar(modal._categoryIndex)
+		})
+	}
+
+	loadCategory(category) {
+		loadXhr(`https://cors.kro.kr/api/${category}`, res => {
+			const modal = this.shadowRoot.querySelector(`modal-news`)
+			const json = JSON.parse(res)
+			// console.log(json)
+			const obj = {}
+			obj[category] = json
+			modal._newsList.push([category, json])
+			if (modal.style.display === `none`) {
+				this.loadDom(modal._newsList[0][1][`result`][0][`link`])
+				modal.show()
+				modal.setIntervalPage()				
 			}
 		})
-		xhr.send()
 	}
+
+	sleep(ms) {
+		return new Promise(resolve => setTimeout(() => resolve(), ms))
+	}
+
+	// loadSearchDB(searchText = ``) {
+	// 	const ul = this.shadowRoot.querySelector(`.search-text`)
+	// 	if (!searchText.trim()) {
+	// 		ul.innerHTML = ``
+	// 		return
+	// 	}
+
+	// 	const url = `https://news.naver.com/`
+
+	// 	loadCors(url, _html => {
+	// 		const parser = new DOMParser()
+	// 		const doc = parser.parseFromString(_html, `text/html`)			
+	// 		ul.innerHTML = ``
+	// 		doc.querySelectorAll(`._sp_each_title`).forEach((a, index) => {
+	// 			if (index >= 5) {
+	// 				return
+	// 			}
+	// 			ul.insertAdjacentHTML(`beforeend`, `<li class="search-link" data-url="${a.href}">${a.textContent}</li>`)				
+	// 		})
+	// 	})
+	// }
 
 	switchURL(modal, url, _html, doc) {
 		if (url.includes(`daum`)){
@@ -123,7 +151,7 @@ export class PageMain extends LitRender(HTMLElement) {
 		const modal = this.shadowRoot.querySelector(`modal-news`)		
 		const div = doc.querySelector(`.content`)
 
-		console.info(`HTML: `, div)
+		// console.info(`HTML: `, div)
 		modal.countImg(doc)
 		modal.addContent(`.news-header`, this.getPressLogo(div))
 		modal.addContent(`.news-header`, this.getTitle(div))
@@ -266,14 +294,55 @@ export class PageMain extends LitRender(HTMLElement) {
 
 	/* Daum End */
 
+	async resizePage(scale = 1) {
+		const div = await document.querySelector(`page-main`)
+
+		let _scale = scale
+	
+		if (document.body.clientWidth >= div.clientWidth * _scale && document.body.clientHeight >= div.clientHeight * _scale) {
+			return
+		}
+
+		_scale -= 0.01
+		div.style.transform = `scale(${_scale})`
+		
+		this.resizePage(_scale)
+	}
+
+	resizeThrottler() {
+		clearTimeout(window.resizeTimeoutPage)
+	
+		window.resizeTimeoutPage = setTimeout(() => {
+			window.resizeTimeoutPage = null
+			this.resizePage()
+		}, 200)
+	}
 
 	render() {
 		return html` 
+		<link rel="stylesheet" type="text/css" href="./src/css/foundation-icons.css">
 		${style}
-		<div id="pageMain">			
-			<img class="logo" src="/src/img/logo.png" width="270"/>
-			<h1 class="site-description">뉴스 기사를 한 화면에!</h1>
-			<input type="search" name="search" placeholder="보고싶은 기사의 URL을 입력해주세요." class="animated-search-form type-url">
+		<div id="pageMain">
+			<div class="logo-wrap">
+				<img class="logo" src="/src/img/logo.png" width="270"/>
+				<h1 class="site-description">네이버 뉴스를 한 눈에!</h1>
+			</div>					
+			<!-- <div class="search-wrap">
+				<input type="search" name="search" placeholder="보고싶은 기사의 URL을 입력해주세요." class="animated-search-form type-url">
+				<ul class="search-text"></ul>
+			</div> -->
+			<div class="dropdown">
+				<button class="dropbtn">카테고리</button>
+				<div class="dropdown-content">
+					<a class="category-list active" href="#">정치 <i class="fi-check size-72"></i></a>
+					<a class="category-list active" href="#">경제 <i class="fi-check size-72"></i></a>
+					<a class="category-list active" href="#">사회 <i class="fi-check size-72"></i></a>
+					<a class="category-list active" href="#">생활·문화 <i class="fi-check size-72"></i></a>
+					<a class="category-list active" href="#">세계 <i class="fi-check size-72"></i></a>
+					<a class="category-list active" href="#">IT·과학 <i class="fi-check size-72"></i></a>
+					<a class="category-submit" href="#">뉴스 보기 시작</a>
+				</div>
+			</div>
         </div>
 		<modal-news />
         `
@@ -283,13 +352,18 @@ export class PageMain extends LitRender(HTMLElement) {
 const style = html`
 <style>	
 #pageMain {
+	display: -ms-grid;
 	display: grid;
+	width: -webkit-fit-content;
+	width: -moz-fit-content;
 	width: fit-content;
 	margin: auto;
 	margin-bottom: 10vh;
+	    grid-template-areas: 
+		"logo category";
 }
 
-#pageMain > * {
+#pageMain > .logo, #pageMain > .site-description {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
@@ -299,22 +373,41 @@ const style = html`
 	font-family: 'Noto Sans KR', sans-serif;
 }
 
+.logo-wrap {
+	-ms-grid-row: 1;
+	-ms-grid-column: 1;
+	grid-area: logo;
+	text-align: center;
+	-ms-grid-row-align: center;
+	    align-self: center;
+}
+
 .logo {
-	box-shadow: 0 0 3.125rem rgba(0, 0, 0, 0.18);
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	    -ms-user-select: none;
+	        user-select: none;
+	-webkit-box-shadow: 0 0 3.125rem rgba(0, 0, 0, 0.18);
+	        box-shadow: 0 0 3.125rem rgba(0, 0, 0, 0.18);
 	min-width: 15vw;
 	width: 250px;
 	max-width: 90vw;
 }
 
 .site-description {
-	color: #3498DB;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	    -ms-user-select: none;
+	        user-select: none;
+	color: #4CAF50;
     text-align: center;
     margin: 1vh 0;
-	font-size: 2vmax;
+	font-size: 25px;
 	font-weight: bold;
 }
 
-.animated-search-form[type=search] {
+/* 실시간 검색 CSS */
+/* .animated-search-form[type=search] {
 	margin-top: 10px;
 	min-width: 50vw;
 	width: 400px;
@@ -326,134 +419,123 @@ const style = html`
 	transition: width 0.4s ease-in-out;
 	line-height: 0;
 	font-size: 0.7vmax;	
-	text-align: center;
+	text-align: left;
+    padding-left: calc(2vw + 5px);
 }
 
-/* 세로비율 START */
-
-@media only screen and (max-width : 480px) and (orientation : portrait) {
-	.site-description {
-		font-size: 9vw;
-	}
-
-	.animated-search-form[type=search] {
-		font-size: 10px;
-	}
+.search-text {
+	list-style: none;
+	text-overflow: ellipsis;
+	background-color: white;
+    overflow: hidden;
+	box-shadow: 0 5px 10px rgba(0,0,0,.2);
+	padding: 0;
 }
 
-@media only screen and (min-width : 480px) and (max-width : 760px) and (orientation : portrait) {
-	.site-description {
-		font-size: 5.5vw;
-	}
-
-	.animated-search-form[type=search] {
-		font-size: 12px;
-  	}
+.search-text li {
+	padding-left: 1vw;	
+	padding-top: 1vh;
+	transition: all 0.2s ease-in-out;
+	color: black;
+	cursor: pointer;
 }
 
-@media only screen and (min-width : 760px) and (max-width : 1024px) and (orientation : portrait) {
-	.site-description {
-		font-size: 4vw;
-	}
-
-	.animated-search-form[type=search] {
-		font-size: 16px;
-  	}
+.search-text li:hover {
+	background-color: #55ACEE;
+	color: white;
 }
 
-@media only screen and (min-width : 1024px) and (max-width : 1920px) and (orientation : portrait) {
-	.site-description {
-		font-size: 3vw;
-	}
+.search-text li:last-of-type {
+	padding-bottom: 1vh;
+} */
 
-	.animated-search-form[type=search] {
-		font-size: 16px;
-  	}
+/* 카테고리 박스 */
+
+.dropdown {
+	-ms-grid-row: 1;
+	-ms-grid-column: 2;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	    -ms-user-select: none;
+	        user-select: none;
+	grid-area: category;
+	margin-left: 20px;
+	position: relative;
+	display: inline-block;
+	height: -webkit-fit-content;
+	height: -moz-fit-content;
+	height: fit-content;
+    -ms-grid-row-align: center;
+        align-self: center;
+    margin: 0 20px;
 }
 
-/* 세로비율 END */
-
-
-/* 가로비율 START */
-
-@media only screen and (max-width : 480px) and (orientation : landscape) {
-  .site-description {
-	font-size: 5.5vw;
-  }
-
-  .animated-search-form[type=search] {
-	font-size: 10px;
-  }
+.dropbtn {		
+	background-color: #4CAF50;
+	color: white;
+	padding: 16px;
+	font-size: 16px;
+	border: none;
+	cursor: pointer;
+	-webkit-transition: all 0.2s ease-in;
+	transition: all 0.2s ease-in;
 }
 
-@media only screen and (min-width : 480px) and (max-width : 640px) and (orientation : landscape) {
-	.site-description {
-		font-size: 6vw;
-	}
-
-	.animated-search-form[type=search] {
-		font-size: 12px;
-  	}
+.dropdown-content {
+	display: block;
+	position: relative;
+	background-color: #f9f9f9;
+	min-width: 160px;
+	-webkit-box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	-webkit-transition: max-height 0.2s ease-in-out;
+	transition: max-height 0.2s ease-in-out;
+	max-height: 336px;
+	overflow: hidden;
 }
 
-@media only screen and (min-width : 640px) and (max-width : 920px) and (orientation : landscape) {
-	.site-description {
-		font-size: 4.5vw;
-	}
-
-	.animated-search-form[type=search] {
-		font-size: 14px;
-  	}
+.dropdown-content.close {
+	max-height: 0;
+	-webkit-transition: max-height 0.2s ease-in-out;
+	transition: max-height 0.2s ease-in-out;
+	overflow: hidden;
 }
 
-@media only screen and (min-width : 920px) and (max-width : 1280px) and (orientation : landscape) {
-	.site-description {
-		font-size: 4vw;
-	}
-
-	.animated-search-form[type=search] {
-		font-size: 16px;
-  	}
+.dropdown-content a {
+	color: black;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+	-webkit-transition: all 0.2s ease-in;
+	transition: all 0.2s ease-in;
 }
 
-@media only screen and (min-width : 1280px) and (max-width : 1920px) and (orientation : landscape) {
-	.logo {
-		min-width: 25vw;
-	}
-
-	.site-description {
-		font-size: 3vw;
-	}
-
-	.animated-search-form[type=search] {
-		font-size: 18px;
-  	}
+.dropdown-content a:last-of-type {
+	background-color: #AF4034;
+    color: white;
 }
 
-@media only screen and (min-width : 1920px) and (orientation : landscape) {
-	.logo {
-		min-width: 25vw;
-	}
-
-	.site-description {
-		font-size: 3vw;
-	}
-
-	.animated-search-form[type=search] {
-		font-size: 1.5vw;
-  	}
+.dropdown-content a:last-child:hover {
+	background-color: hsl(6, 54%, 35%);
 }
 
-/* 가로비율 END */
-
-@media only screen and (min-width : 768px) and (max-width : 1024px) and (orientation : landscape) {
-  /* Styles */
+.dropdown-content a:not(:last-of-type):hover {
+	background-color: #f1f1f1;
 }
 
-/* iPads (portrait) ----------- */
-@media only screen and (min-width : 768px) and (max-width : 1024px) and (orientation : portrait) {
-  /* Styles */
+.category-list i {
+	display: none;
+	float: right;
 }
+
+.category-list.active i {
+	display: block;
+}
+
+.dropbtn:hover {
+	background-color: #3e8e41;
+}
+
 
 </style>
 `
