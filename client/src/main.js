@@ -1,3 +1,4 @@
+import './libs/polyfill-remove.js'
 import './components/page-main.js'
 
 export class Main {

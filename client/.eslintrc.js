@@ -44,7 +44,7 @@ module.exports = {
         // 비교 연산자(==)를 할당 연산자(=)로 쓰지마라
         "no-cond-assign": 2,
         // console문은 디버깅 이후 제거할 것
-        "no-console": [1, { allow: ["info", "warn", "error"] }],
+        "no-console": [1, { allow: ["info", "warn", "error", "group", "groupCollapsed", "groupEnd"] }],
         // 적절치 못한 조건문
         "no-constant-condition": 2,
         // 적절치 못한 정규표현식

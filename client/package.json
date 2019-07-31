@@ -6,6 +6,7 @@
   "dependencies": {
     "@webcomponents/webcomponentsjs": "^2.2.10",
     "autoprefixer": "^9.4.0",
+    "axios": "^0.19.0",
     "css-loader": "^3.0.0",
     "custom-elements-es5-adapter": "^1.0.0",
     "eslint": "^5.15.1",

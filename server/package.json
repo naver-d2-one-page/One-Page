@@ -17,11 +17,20 @@
   },
   "homepage": "https://github.com/naver-d2-one-page/One-Page#readme",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "cors-anywhere": "^0.4.1",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
     "forever": "^1.0.0",
+    "http-errors": "^1.7.3",
+    "iconv-lite": "^0.5.0",
     "jssoup": "0.0.10",
+    "moment": "^2.24.0",
+    "morgan": "^1.9.1",
+    "mysql": "^2.17.1",
     "nodemon": "^1.19.1",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "swagger-ui-express": "^4.0.7"
   },
   "devDependencies": {
     "eslint": "^6.0.1"
