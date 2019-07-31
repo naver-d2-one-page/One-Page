@@ -68,8 +68,23 @@ npm install
  ┣ 📜wct.conf.json
  ┗ 📜webpack.config.js			# Webpack 설정
 📦server
- ┗ 생성 중
+ ┣ 📂controller
+ ┃ ┗ 📜newlist.js
+ ┣ 📜.eslintrc.js
+ ┣ 📜.gitignore
+ ┣ 📜app.js
+ ┣ 📜bbclink.js
+ ┣ 📜cors-server.js
+ ┣ 📜db_connect.js
+ ┣ 📜index.js
+ ┣ 📜insert.js
+ ┣ 📜package-lock.json
+ ┣ 📜package.json
+ ┗ 📜swagger.json
 📜.travis.yml				# Travis CI 설정
+📜LICENSE
+📜package-lock.json
+📜README.md
 ```
 
 
