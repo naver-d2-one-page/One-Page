@@ -141,11 +141,7 @@ export class PageMain extends LitRender(HTMLElement) {
 			const parser = new DOMParser()
 			const doc = parser.parseFromString(_html, `text/html`)
 			ul.innerHTML = ``
-			
-			doc.querySelectorAll(`a[href*="/main/read.nhn?mode=LSD"]`).forEach((a, index) => {
-				if (index >= 5) {
-					return
-				}
+			doc.querySelectorAll(`a[href*="/main/read.nhn?mode=LSD"]`).forEach(a => {
 				if (a.textContent.includes(searchText)) {
 					ul.insertAdjacentHTML(`beforeend`, `<li class="search-link" data-url="${a.href}" data-oid="${a.href.match(/oid=(.*?)&/)[1]}" data-aid="${a.href.split(`aid=`)[1]}">${a.textContent}</li>`)
 				}
@@ -450,6 +446,8 @@ const style = html`
     overflow: hidden;
 	box-shadow: 0 5px 10px rgba(0,0,0,.2);
 	padding: 0;
+	overflow: scroll;
+    max-height: 180px;
 }
 
 .search-text li {
