@@ -1,6 +1,6 @@
 {
   "name": "the-view-client",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "네이버 D2 출품작",
   "main": "webpack.config.js",
   "dependencies": {
