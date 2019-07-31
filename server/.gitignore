@@ -1,11 +1,7 @@
 node_modules
 .vscode
 *.log
-<<<<<<< HEAD
 *.env
-=======
-.env
->>>>>>> dfca6dc68710be43c4e70856e25b82ceea6d7ca8
 .eslintcache
 .npm
 main-bundle.js
