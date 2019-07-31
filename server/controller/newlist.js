@@ -3,21 +3,48 @@ let router   = express.Router();
 
 const dbcon = require('../db_connect');
 let con = dbcon()
-// let Order     = require('../models/order');//  우리가 정의해야할 디비 모델 임포트해야하고
 con.connect()
+const findcount = (table) => {
+  return new Promise(resolve => {
+    con.query('select count(link) as count from '+ table, (error, results) => {
+      if (error) {
+        return console.error(error.message);
+      }
+      resolve(results[0].count)
+      return results[0].count
+    });
+  })  
+}
 // IT 테이블 긁어오기
-router.get('/it',  function(req,res){
-    con.query('select link from IT', (error, results) => {
+router.get('/it',  async function(req,res){
+    let count = req.query.count
+    const realcount = await findcount('it')
+    const final_result = {result:[], count:0}
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
+    con.query('select title,link from it order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
         }
-        return res.json(results)
+        results.forEach( data => {
+          let title = data.title
+          let link = data.link
+          final_result.result.push({title:title, link:link})
+        })
+        final_result.count = count
+        return res.json(final_result)
       });
 });
 
 //사회 테이블 긁어오기
-router.get('/society',  function(req,res){
-    con.query('select link from society', (error, results) => {
+router.get('/society',  async function(req,res){
+    let count = req.query.count
+    const realcount = await findcount('society')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
+    con.query('select link from society order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
         }
@@ -26,8 +53,13 @@ router.get('/society',  function(req,res){
 });
 
 // 경제 테이블 긁어오기
-router.get('/economy',  function(req,res){
-    con.query('select link from economy', (error, results) => {
+router.get('/economy',  async function(req,res){
+    let count = req.query.count
+    const realcount = await findcount('economy')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
+    con.query('select link from economy order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
         }
@@ -36,8 +68,13 @@ router.get('/economy',  function(req,res){
 });
 
 // 정치 테이블 긁어오기
-router.get('/polity',  function(req,res){
-    con.query('select link from polity', (error, results) => {
+router.get('/polity',  async function(req,res){
+    let count = req.query.count
+    const realcount = await findcount('polity')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
+    con.query('select link from polity order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
         }
@@ -46,8 +83,13 @@ router.get('/polity',  function(req,res){
 });
 
 // 생활/문화 테이블 긁어오기
-router.get('/living',  function(req,res){
-    con.query('select link from living', (error, results) => {
+router.get('/living',  async function(req,res){
+    let count = req.query.count
+    const realcount = await findcount('living')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
+    con.query('select link from living order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
         }
@@ -56,8 +98,13 @@ router.get('/living',  function(req,res){
 });
 
 // 세계뉴스 테이블 긁어오기
-router.get('/world',  function(req,res){
-    con.query('select link from world', (error, results) => {
+router.get('/world',  async function(req,res){
+    let count = req.query.count
+    const realcount = await findcount('world')
+    if(!req.query.count || count > realcount){
+      count = 10
+    }
+    con.query('select link from world order by no desc limit '+ count, (error, results) => {
         if (error) {
           return console.error(error.message);
         }
