@@ -443,7 +443,7 @@ const style = html`
 	list-style: none;
 	text-overflow: ellipsis;
 	background-color: white;
-    overflow: hidden;
+    overflow-x: hidden;
 	box-shadow: 0 5px 10px rgba(0,0,0,.2);
 	padding: 0;
 	overflow: scroll;
